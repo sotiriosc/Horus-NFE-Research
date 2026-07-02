@@ -542,6 +542,72 @@ None of these require measurement to predict — they are provable from the arit
 | [HORUS_V3_FINAL_SPEC.md](HORUS_V3_FINAL_SPEC.md) | Gold master specification; layered architecture model; system invariants |
 | [EXECUTION_MAPPING.md](EXECUTION_MAPPING.md) | Formal execution contract; phase-space semantics |
 | [HORUS_SYSTEM_UTILIZATION_BLUEPRINT.md](HORUS_SYSTEM_UTILIZATION_BLUEPRINT.md) | Runtime strategy; mode selection guide; deployment configurations |
+| [HORUS_C1_COMPILER_SPEC.md](HORUS_C1_COMPILER_SPEC.md) | Compiler specification; region classification; ABMP protocol |
+| [HORUS_SYSTEM_COMPILATION_MODEL.md](HORUS_SYSTEM_COMPILATION_MODEL.md) | Compilation model; layer separation diagrams; full pipeline |
+
+---
+
+## Compiler Separation Principle (HBS-C1)
+
+**Source:** HORUS C1 Compiler Specification · 2026-07-02  
+**Authority:** Derived from frozen HBS-11..14 hardware physics
+
+### Principle Statement
+
+> **Hardware defines physics. Compiler defines routing. The compiler cannot alter arithmetic outcomes.**
+
+HORUS v3 enforces a strict separation between three domains:
+
+| Domain | Owner | Scope |
+|---|---|---|
+| Arithmetic physics | Hardware (horus_nfe, RTL) | Exponent boundaries, UF/OVF, Thoth Rollover, result computation |
+| Accumulator policy | Hardware (mode_tag decoder, RTL) | Post-arithmetic accumulation behavior per cycle |
+| Execution routing | Compiler (HORUS C1) | Region classification, mode_tag selection, depth budgeting, ABMP |
+
+### The Compiler Is a Phase-Space Router, Not a Numerical Optimizer
+
+The compiler's output is an instruction stream: sequences of (op_a, op_b, op_sel, mode_tag, accum_en, accum_clr, host_tile_depth). The compiler has no other control surface. It cannot:
+
+- Modify the `result` output for any operation
+- Change the exponent at which UF or OVF fires
+- Suppress or delay hardware flags
+- Alter the Thoth Rollover threshold
+- Extend the stable operating band
+
+The compiler's sole capability is to **route operations into regions where the hardware physics produce desired behavior**. This is why it is a phase-space router: it moves computations through the four-region exponent space while respecting the physics of each region.
+
+### Routing vs. Optimization: A Critical Distinction
+
+A numerical optimizer would attempt to transform computation `f(x)` into an equivalent computation `g(y)` that produces fewer errors. HORUS C1 does not do this. It accepts the arithmetic behavior of each region as ground truth and routes accordingly:
+
+```
+If E_pred ∈ [20..43]:  route to STABLE band  → full precision guaranteed
+If E_pred ∈ [16..19]:  route to TRANSITION   → scale-up normalization required
+If E_pred ≤ 15:        route to SENTINEL path → discard or floor-gate
+```
+
+The compiler does not attempt to "fix" E_pred=15 operations by some substitution. It either rescales the operand before the operation (normalization) or accepts the floor result and routes accordingly.
+
+### Active Boundary Management Protocol (ABMP)
+
+ABMP (defined in HORUS_C1_COMPILER_SPEC.md §1.8) is the compiler's only "active" behavior at boundaries. It is a three-phase rescue sequence: Snapshot the accumulator, Normalize the operand (via MUL by TWO^k), then Resume with a fresh accumulation window.
+
+ABMP is not boundary "correction" — it is boundary **avoidance through advance routing**. The compiler predicts when an operand will approach a cliff and rescales it before the cliff is reached. The arithmetic physics are unchanged; the operand simply never arrives at E=15.
+
+**Architecture of the architect's suggestion (§1.8):**  
+The suggestion to inject mode_tag=010 before boundary crossings is **partially correct but architecturally incomplete**. Mode_010 (PRE_SCALED) affects the accumulator only; it cannot prevent the `result` from entering collapse or saturation (HBS-14 invariant: result is mode-invariant). The primary prevention action is operand normalization (MUL by NFE_TWO^k). Mode_010 is correctly used as the secondary accumulator guard *during* normalization, reducing the accumulated contribution of transit-zone intermediate results.
+
+### Definitive Statement: Immutable Compiler Invariants
+
+1. **Arithmetic physics is not modified by the compiler.** The compiler operates on a closed hardware system. All arithmetic behaviors documented in HBS-11..14 are invariant. The compiler builds on them.
+
+2. **The compiler only selects execution region and mode_tag.** No additional control is available. No compiler action changes the `result` of any operation.
+
+3. **No attempt is made to "correct" UF or OVF.** When hardware signals these events, the compiler closes the accumulation epoch and logs the event. It does not substitute a different result.
+
+4. **All boundary effects are preserved, not hidden.** Hardware flags (`underflow_flag`, `exp_ovf_flag`, `rollover_flag`) are observable to the host system. The compiler passes them through.
+
+5. **Mode invariance is a compiler precondition.** The compiler selects modes knowing that `result` is mode-invariant (proven HBS-14). This invariant must hold or the compiler's region-mode mapping is undefined.
 
 ---
 
@@ -669,3 +735,4 @@ Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate
 *HBS-11 Validated: 2026-07-02 · HBS-12 Arithmetic Envelope added: 2026-07-02*
 *HBS-13 Boundary Gap added: 2026-07-02 · HBS-14 System Integration added: 2026-07-02*
 *Structural Decoupling Proof added: 2026-07-02 · HORUS_V3_FINAL_SPEC issued: 2026-07-02*
+*Compiler Separation Principle (HBS-C1) added: 2026-07-02*
