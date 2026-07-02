@@ -511,6 +511,24 @@ hbs_c17: sim_hbs_c17
 	@echo "         docs/HBS_C17_FEEDBACK_CLOSURE.md  docs/HORUS_CAUSAL_CLOSURE_MAP.md"
 	@echo ""
 
+# ── HBS-C21: Controlled Feedback Coupling Experiment (Option A) ───────────────
+# 3 regimes (k=12, 10, 8) × 2,000 cycles = 6,000 cycles.
+# Measures AII, CPR, PIG, SLF to characterize coupling penetration depth.
+# ALU core RTL is untouched; computed_mod is a testbench-layer side-channel.
+sim_hbs_c21: $(TB)/tb_hbs_c21_feedback_probe.v $(SRC_CORE)
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs_c21: sim_hbs_c21
+	@echo ""
+	@echo "Running HBS-C21 Feedback Probe Suite..."
+	$(VVP) sim_hbs_c21
+	@echo ""
+	$(PYTHON) HBS_C21_ANALYSIS.py
+	@echo ""
+	@echo "Outputs: HBS_C21_FEEDBACK_TRACE.csv  HBS_C21_REGIME_RESULTS.csv"
+	@echo "         HBS_C21_SUMMARY.log"
+	@echo ""
+
 # ── HBS-C20: Closure Firewall Localization & Causal Boundary Extraction ───────
 # 3 isolation stress modes × 2,000 cycles = 6,000 cycles.
 # Extracts the exact causal boundary geometry of the HORUS v3 firewall.

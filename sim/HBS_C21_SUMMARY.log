@@ -1,0 +1,146 @@
+========================================================================
+HBS-C21: Controlled Feedback Coupling Experiment
+  Option A: computed_mod = computed + (accum_reg >> k)
+========================================================================
+Total cycles: 6000
+
+────────────────────────────────────────────────────────────────────────
+REGIME 1: shift_k=12  (weak — mantissa only)  (2000 cycles)
+────────────────────────────────────────────────────────────────────────
+  Coupling term:  mean=10.48  max=32  non-zero=1651/2000
+  r(coupling,computed) = 0.966789
+
+  METRICS:
+    AII_base (computed self-correlation) = 0.536191 ← intrinsic (E-field → class)
+    AII_mod  (computed_mod correlation)  = 0.537620 
+    AII_delta (coupling-induced imprint)  = 0.001429 ← no imprint
+    CPR  (Causal Penetration Ratio)   = 0.000066 (= 0.007% of variance)
+    SLF  (Stability Loss Function)    = 0.000146  (-38.37 dB)
+    PIG  (Phase Injection Gain)       = 1.008075 (× amplification at transitions)
+
+  Attractor distribution (base computed vs computed_mod):
+    A1(cancel)        base=   20 (  1.0%)  mod=   45 (  2.2%) ← shifted
+    A2(explode)       base=  404 ( 20.2%)  mod=  394 ( 19.7%) ← shifted
+    A3(rollover)      base=   35 (  1.8%)  mod=   29 (  1.4%) ← shifted
+    A4(entropic)      base= 1541 ( 77.0%)  mod= 1532 ( 76.6%) ← shifted
+  Attractor class changed: 53 / 2000 cycles (2.65%)
+  E-field mean shift: -0.6290 units
+
+  Transition analysis (113 attractor transitions):
+    mean |Δcomputed|   at transitions = 1154.0177
+    mean |Δcomputed_mod| at transitions = 1163.3363
+    PIG = 1.0081  (amplified)
+
+  ╔═══════════════════════════════════════════╗
+  ║  REGIME 1 CLASSIFICATION: REGIME_1_NO_PENETRATION║
+  ╚═══════════════════════════════════════════╝
+
+────────────────────────────────────────────────────────────────────────
+REGIME 2: shift_k=10  (medium — low E-field)  (2000 cycles)
+────────────────────────────────────────────────────────────────────────
+  Coupling term:  mean=43.27  max=129  non-zero=1841/2000
+  r(coupling,computed) = 0.969176
+
+  METRICS:
+    AII_base (computed self-correlation) = 0.536191 ← intrinsic (E-field → class)
+    AII_mod  (computed_mod correlation)  = 0.541632 
+    AII_delta (coupling-induced imprint)  = 0.005440 ← no imprint
+    CPR  (Causal Penetration Ratio)   = 0.001013 (= 0.101% of variance)
+    SLF  (Stability Loss Function)    = 0.002411  (-26.18 dB)
+    PIG  (Phase Injection Gain)       = 1.032192 (× amplification at transitions)
+
+  Attractor distribution (base computed vs computed_mod):
+    A1(cancel)        base=   20 (  1.0%)  mod=   50 (  2.5%) ← shifted
+    A2(explode)       base=  404 ( 20.2%)  mod=  389 ( 19.4%) ← shifted
+    A3(rollover)      base=   35 (  1.8%)  mod=   31 (  1.6%)
+    A4(entropic)      base= 1541 ( 77.0%)  mod= 1530 ( 76.5%) ← shifted
+  Attractor class changed: 136 / 2000 cycles (6.80%)
+  E-field mean shift: -1.3115 units
+
+  Transition analysis (113 attractor transitions):
+    mean |Δcomputed|   at transitions = 1154.0177
+    mean |Δcomputed_mod| at transitions = 1191.1681
+    PIG = 1.0322  (amplified)
+
+  ╔═══════════════════════════════════════════╗
+  ║  REGIME 2 CLASSIFICATION: REGIME_1_NO_PENETRATION║
+  ╚═══════════════════════════════════════════╝
+
+────────────────────────────────────────────────────────────────────────
+REGIME 3: shift_k=8  (strong — full E-field)  (2000 cycles)
+────────────────────────────────────────────────────────────────────────
+  Coupling term:  mean=174.52  max=517  non-zero=1932/2000
+  r(coupling,computed) = 0.969409
+
+  METRICS:
+    AII_base (computed self-correlation) = 0.536191 ← intrinsic (E-field → class)
+    AII_mod  (computed_mod correlation)  = 0.555915 
+    AII_delta (coupling-induced imprint)  = 0.019723 ← IMPRINT
+    CPR  (Causal Penetration Ratio)   = 0.013598 (= 1.360% of variance)
+    SLF  (Stability Loss Function)    = 0.038971  (-14.09 dB)
+    PIG  (Phase Injection Gain)       = 1.129229 (× amplification at transitions)
+
+  Attractor distribution (base computed vs computed_mod):
+    A1(cancel)        base=   20 (  1.0%)  mod=   49 (  2.5%) ← shifted
+    A2(explode)       base=  404 ( 20.2%)  mod=  339 ( 16.9%) ← shifted
+    A3(rollover)      base=   35 (  1.8%)  mod=   17 (  0.8%) ← shifted
+    A4(entropic)      base= 1541 ( 77.0%)  mod= 1595 ( 79.8%) ← shifted
+  Attractor class changed: 364 / 2000 cycles (18.20%)
+  E-field mean shift: -4.1465 units
+
+  Transition analysis (113 attractor transitions):
+    mean |Δcomputed|   at transitions = 1154.0177
+    mean |Δcomputed_mod| at transitions = 1303.1504
+    PIG = 1.1292  (amplified)
+
+  ╔═══════════════════════════════════════════╗
+  ║  REGIME 3 CLASSIFICATION: REGIME_2_LINEAR_BLEED║
+  ╚═══════════════════════════════════════════╝
+
+========================================================================
+SUMMARY ACROSS ALL REGIMES
+========================================================================
+
+Regime    k         AII_base     AII_Δ       CPR    SLF_dB      PIG  Classification
+────────────────────────────────────────────────────────────────────────────────
+  R1 k=12        0.536191    0.001429    0.000066    -38.37 dB   1.008075  REGIME_1_NO_PENETRATION
+  R2 k=10        0.536191    0.005440    0.001013    -26.18 dB   1.032192  REGIME_1_NO_PENETRATION
+  R3 k=8         0.536191    0.019723    0.013598    -14.09 dB   1.129229  REGIME_2_LINEAR_BLEED
+
+CPR scaling with k:
+  k=12: CPR=0.000066  
+  k=10: CPR=0.001013  
+  k= 8: CPR=0.013598  █
+
+========================================================================
+SCIENTIFIC INTERPRETATION
+========================================================================
+
+  ► LINEAR BLEED detected. No phase takeover.
+    The feedback coupling introduces measurable but bounded deviation.
+    computed_mod ≠ computed, but the deviation is proportional to
+    the coupling term — no nonlinear amplification observed.
+    System remains classifiable as 'closed with external bias envelope'.
+
+
+  KEY FINDING: r(coupling_term, computed) = 0.9685
+  The coupling term is nearly identical to a scaled version of 'computed'.
+  accum_reg = ∫ computed dt (time-integral over accumulation epochs).
+  Feeding it back adds an ECHO of the arithmetic history — not new state info.
+  This is a SELF-REINFORCING feedback, not a cross-domain coupling.
+
+  Closure status: Arithmetic core (computed) remains UNMODIFIED.
+  The coupling is a side-channel term, not a feedback loop.
+  computed_mod is an OBSERVER LAYER quantity, not an architectural one.
+
+========================================================================
+BOUNDARY BETWEEN DIGITAL ARITHMETIC AND COMPUTATIONAL DYNAMICS
+========================================================================
+
+  Digital arithmetic (closed):  dynamics → accumulation only
+  Computational dynamics (open): dynamics → modulate the function
+
+  Maximum CPR observed:  0.013598
+  → System is at the boundary (hybrid zone).
+    CPR 1-10%: state creates a detectable arithmetic bias envelope.
+

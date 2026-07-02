@@ -1799,3 +1799,38 @@ Three isolation stress modes were applied:
 The closure is not a coincidence of balanced leakage paths.  It is structural: the edges from state channels to the arithmetic computation unit do not exist in the RTL dependency graph.
 
 *C20 Closure Firewall Geometry Principle added: 2026-07-02*
+
+---
+
+## C21 Feedback Coupling & Arithmetic Self-Dominance Principle
+
+> *"A closed system fed its own history does not open — it deepens its existing structure.
+> You cannot break causal isolation by injecting what the system already produced."*
+
+HBS-C21 introduced a controlled side-channel coupling from the state subsystem back into the arithmetic observation path:
+
+```
+computed_mod = computed + (accum_reg >> k)
+```
+
+Three coupling strengths were tested (k = 12, 10, 8) with 2,000 cycles each.  The ALU core (`computed = f(op_a, op_b, op_sel)`) was untouched throughout.
+
+**Key discovery — The Arithmetic Echo Effect:**
+
+`r(coupling_term, computed) = 0.97`
+
+Because `accum_reg` is the time-integral of `computed` values, the feedback term carries **arithmetic history, not policy state**.  Feeding it back creates a self-reinforcing echo, not a genuine cross-domain injection.  The coupling term is already fully explained by the existing arithmetic signal.
+
+**Measured outcomes:**
+
+| Coupling | AII_delta | CPR | Classification |
+|----------|-----------|-----|----------------|
+| k=12 (weak) | 0.0014 | 0.007% | No penetration |
+| k=10 (medium) | 0.0054 | 0.101% | No penetration |
+| k=8 (strong) | 0.0197 | 1.36% | Linear bleed |
+
+Maximum CPR = 1.36% — the state domain contributes at most 1.36% of output variance even with explicit forced coupling.
+
+**Implication:**  To achieve genuine state-to-arithmetic coupling, the injection term must carry policy-dependent information that is NOT already correlated with the arithmetic output (e.g., pure `mode_tag` bits — Option B for HBS-C22).
+
+*C21 Feedback Coupling & Arithmetic Self-Dominance Principle added: 2026-07-02*
