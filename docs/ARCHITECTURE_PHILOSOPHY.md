@@ -1772,3 +1772,30 @@ Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate
 *C17 Accumulation Feedback Closure Principle added: 2026-07-02*
 *C18 Formal System Closure Theorem added: 2026-07-02*
 *C19 Closure Adversarial Stability Principle added: 2026-07-02*
+
+---
+
+## C20 Closure Firewall Geometry Principle
+
+> *"A truly closed system does not absorb perturbations — it simply has no edges
+> for them to travel on.  The firewall is not a wall; it is the absence of a door."*
+
+HBS-C20 upgraded the HBS-C18 Closure Theorem from algebraic proof to empirical geometry.  Six thousand cycles of boundary-probe instrumentation confirmed:
+
+**The HORUS v3 causal boundary is a zero-thickness step function located at the B0|B1 interface.**
+
+Measured properties:
+- BTF(B1, mode_tag) = **0.000** — not small, not attenuated, exactly zero
+- BTF(B1, accum_clr) = **0.000**
+- FSI (Firewall Sharpness Index) = **∞** for all state channels
+- CHD (Causal Horizon Depth) = **∞** for state channels reaching the ALU
+- RCS (Reverse Causality Score) = **< 10⁻⁴** for all state channels at all boundaries
+
+Three isolation stress modes were applied:
+- **Mode A** (pure single-channel injection trace): each state channel tested individually, propagation front localized
+- **Mode B** (deterministic reverse sweep): confirmed no backward reconstruction path from any boundary output to any state channel
+- **Mode C** (100% BER saturation): all state channels driven at maximum entropy simultaneously; arithmetic subspace showed zero response
+
+The closure is not a coincidence of balanced leakage paths.  It is structural: the edges from state channels to the arithmetic computation unit do not exist in the RTL dependency graph.
+
+*C20 Closure Firewall Geometry Principle added: 2026-07-02*

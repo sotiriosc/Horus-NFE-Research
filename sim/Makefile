@@ -511,6 +511,24 @@ hbs_c17: sim_hbs_c17
 	@echo "         docs/HBS_C17_FEEDBACK_CLOSURE.md  docs/HORUS_CAUSAL_CLOSURE_MAP.md"
 	@echo ""
 
+# ── HBS-C20: Closure Firewall Localization & Causal Boundary Extraction ───────
+# 3 isolation stress modes × 2,000 cycles = 6,000 cycles.
+# Extracts the exact causal boundary geometry of the HORUS v3 firewall.
+sim_hbs_c20: $(TB)/tb_hbs_c20_boundary_trace.v $(SRC_CORE)
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs_c20: sim_hbs_c20
+	@echo ""
+	@echo "Running HBS-C20 Closure Firewall Localization Suite..."
+	$(VVP) sim_hbs_c20
+	@echo ""
+	$(PYTHON) HBS_C20_ANALYSIS.py
+	@echo ""
+	@echo "Outputs: HBS_C20_BOUNDARY_TRACE.csv  HBS_C20_BTF_MATRIX.csv"
+	@echo "         HBS_C20_SUMMARY.log"
+	@echo "         docs/HBS_C20_RESULTS.md  docs/HORUS_CLOSURE_GEOMETRY.md"
+	@echo ""
+
 # ── HBS-C19: Closure Falsification Under Cross-Domain Coupling ────────────────
 # 5 adversarial injection regimes × 2,000 cycles = 10,000 cycles.
 # Attempts to falsify the HBS-C18 System Closure Theorem via forced coupling.

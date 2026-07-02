@@ -1,0 +1,17 @@
+mode,sub_mode,injection_channel,boundary,btf_cond_prob,btf_pearson_r,lag_0_r,lag_1_r,lag_2_r,lag_3_r,chd
+A,A1-op_a-injection,op_a,B1_mant,0.997019,0.576489,0.576489,0.002112,0.002116,0.002119,0
+A,A1-op_a-injection,op_a,B1_computed,1.000000,1.000000,1.000000,0.000000,0.000000,0.000000,0
+A,A1-op_a-injection,op_a,B2_accum_w,0.985097,0.299256,0.299256,0.004752,0.004759,0.004766,0
+A,A1-op_a-injection,op_a,B2_accum_r,1.000000,0.000000,0.000000,0.000000,0.000000,0.000000,-1
+A,A1-op_a-injection,op_a,B3_result,1.000000,0.000000,0.000000,0.000000,0.000000,0.000000,-1
+A,A2-mode_tag-injection,mode_tag,B1_mant,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,-1
+A,A2-mode_tag-injection,mode_tag,B1_computed,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,-1
+A,A2-mode_tag-injection,mode_tag,B2_accum_w,0.671154,0.556552,0.556552,0.262638,0.043763,0.014328,0
+A,A2-mode_tag-injection,mode_tag,B2_accum_r,1.000000,0.000000,0.000000,0.000000,0.000000,0.000000,-1
+A,A2-mode_tag-injection,mode_tag,B3_result,0.000000,0.071403,0.071403,0.000000,0.000000,0.000000,0
+A,A3-accum_clr-injection,accum_clr,B1_mant,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,-1
+A,A3-accum_clr-injection,accum_clr,B1_computed,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,-1
+A,A3-accum_clr-injection,accum_clr,B2_accum_w,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,-1
+A,A3-accum_clr-injection,accum_clr,B2_accum_r,1.000000,0.591003,0.591003,0.008025,0.005256,0.043390,0
+A,A3-accum_clr-injection,accum_clr,B3_result,0.000000,0.000000,0.000000,0.000000,0.000000,0.000000,-1
+C,saturation,mode_tag_noise,B1_computed,0.000000,0.000000,0.0,0.0,0.0,0.0,-1
