@@ -1,0 +1,60 @@
+HBS_C13_VERDICT=FULLY_CONTROLLABLE
+TRANSITIONS_PASS=12
+TRANSITIONS_PARTIAL=0
+AVG_NOISE_DEGRADATION=1.67
+
+TRANSITION_SUCCESS_MATRIX
+  A1->A2: rate=1.000 latency=0ep
+  A1->A3: rate=0.900 latency=1ep
+  A1->A4: rate=1.000 latency=0ep
+  A2->A1: rate=1.000 latency=0ep
+  A2->A3: rate=1.000 latency=0ep
+  A2->A4: rate=1.000 latency=0ep
+  A3->A1: rate=1.000 latency=0ep
+  A3->A2: rate=1.000 latency=0ep
+  A3->A4: rate=1.000 latency=0ep
+  A4->A1: rate=1.000 latency=0ep
+  A4->A2: rate=1.000 latency=0ep
+  A4->A3: rate=1.000 latency=0ep
+
+MINIMAL_CONTROL_SIGNALS
+  A1->A2: level=0 (FULL_TARGET)
+  A1->A3: INSUFFICIENT
+  A2->A1: level=0 (FULL_TARGET)
+  A3->A1: level=0 (FULL_TARGET)
+
+BASIN_MAP
+  (ADD, E=12): attractor=A3 conf=0.80
+  (ADD, E=32): attractor=A1 conf=0.70
+  (ADD, E=47): attractor=A3 conf=0.80
+  (MUL, E=12): attractor=A2 conf=0.95
+  (MUL, E=32): attractor=A2 conf=0.95
+  (MUL, E=47): attractor=A2 conf=0.99
+  (SUB, E=12): attractor=A3 conf=0.65
+  (SUB, E=32): attractor=A1 conf=0.90
+  (SUB, E=47): attractor=A4 conf=0.55
+
+BASIN_GEOMETRY
+  ADD: DISCONTINUOUS (isolated middle)
+  SUB: PIECEWISE FLAT (monotone)
+  MUL: CONVEX (single attractor)
+
+REACHABILITY_GRAPH
+  A1: A2, A3, A4
+  A2: A1, A3, A4
+  A3: A1, A2, A4
+  A4: A1, A2, A3
+
+CONTROL_COST_RANKING
+   1. A1->A2: cost=0.000
+   2. A1->A4: cost=0.000
+   3. A2->A1: cost=0.000
+   4. A2->A3: cost=0.000
+   5. A2->A4: cost=0.000
+   6. A3->A1: cost=0.000
+   7. A3->A2: cost=0.000
+   8. A3->A4: cost=0.000
+   9. A4->A1: cost=0.000
+  10. A4->A2: cost=0.000
+  11. A4->A3: cost=0.000
+  12. A1->A3: cost=0.200

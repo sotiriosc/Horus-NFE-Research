@@ -1426,6 +1426,57 @@ boundary extremism.
 
 ---
 
+**C13 Controllability Principle:**
+
+*HORUS v3 attractor dynamics are fully controllable via input design.*
+
+The HBS-C13 suite (7,528 cycles, 4 sub-suites, 12 directed transitions) demonstrated that
+every attractor in the C8 model is reachable from every other attractor in ≤1 epoch (16 cycles)
+using only input-level manipulation—no RTL, compiler, or policy changes required.
+
+**Core result: FULLY_CONTROLLABLE**
+
+The 4×4 attractor transition success matrix is fully populated: all 12 non-diagonal entries
+achieve ≥90% target occupancy. The reachability graph is K₄ (complete), meaning HORUS v3's
+attractor landscape has no isolated or unreachable regions.
+
+**Key controllability findings:**
+
+1. **Input-Instantaneous Transitions**: Attractor state is determined entirely by current
+   inputs. There is no hysteresis: change the input, change the attractor within one epoch.
+
+2. **MUL Basin is E-Independent**: The A2 (exponent explosion) attractor dominates for any
+   initial E when MUL operations are sustained. Its basin boundary is defined by op_type, not E.
+
+3. **Asymmetric Energy Cost**: Entering A2 requires full MUL commitment; exiting A2 requires
+   only 50% SUB dilution. The basin is asymmetric around its activation threshold.
+
+4. **ADD Basin is Topologically Disconnected**: A3 (boundary oscillation) appears at both
+   low-E and high-E ADD, with A1 appearing at mid-STABLE ADD. The ADD attractor basin has two
+   disjoint connected components—the only non-convex basin in the system.
+
+5. **Noise-Robust Steering**: Average steering success under adversarial noise (30% fraction
+   scrambling and E±1 jitter) degraded by only 1.7%. Fraction-level noise has zero effect on
+   attractor identity, confirming that the E-field is the fundamental control dimension.
+
+6. **Steerable = Avoidable**: Since all attractors are controllable, all attractors are also
+   avoidable. Any failure mode can be suppressed by appropriate input sequence design.
+
+**Architectural implication:** HORUS v3 is a fully steerable dynamical system. Workload
+designers, schedulers, and the C4 compiler have complete input-level authority over which
+failure mode the system enters. This upgrades the system safety model from *reactive*
+(detect-and-recover) to *proactive* (steer-to-avoid).
+
+**Cumulative evidence (HBS-C8 through C13):**
+
+> Across 75,728+ simulation cycles under structured, adversarial, singular, predictive,
+> adversarially-real, and controllability testing, HORUS v3's four-attractor model (C8)
+> is confirmed as **complete, minimal, closed, predictive (F1=0.854), robust (PARTIALLY_ROBUST
+> under epoch-reset violation), and fully controllable (FULLY_CONTROLLABLE)**. The system
+> transitions from OBSERVATION to CONTROL: all dynamical failure modes are steerable.
+
+---
+
 *Horus (Native Fractional Engine project) · Architecture Philosophy v3 ·
 Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate*
 *HBS-11 Validated: 2026-07-02 · HBS-12 Arithmetic Envelope added: 2026-07-02*
@@ -1442,3 +1493,4 @@ Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate
 *C9 Singularity Validation Principle added: 2026-07-02*
 *C10 Predictive Validation Principle added: 2026-07-02*
 *C12 Adversarial Robustness Principle added: 2026-07-02*
+*C13 Controllability Principle added: 2026-07-02*

@@ -30,7 +30,7 @@ SRC_SYSTOLIC := $(RTL)/horus_systolic_array.v $(RTL)/horus_controller.v \
                 $(RTL)/horus_input_buffer.v $(RTL)/horus_top.v
 
 # =============================================================================
-.PHONY: all hbs11 hbs12 hbs13 hbs14 hbs_c2 hbs_c5 hbs_c6 hbs_c7 hbs_c8 hbs_c9
+.PHONY: all hbs11 hbs12 hbs13 hbs14 hbs_c2 hbs_c5 hbs_c6 hbs_c7 hbs_c8 hbs_c9 hbs_c13
 all: sim_mesh
 	@echo ""
 	@echo "Running Horus Mesh Testbench (7/7 tests expected)..."
@@ -278,6 +278,9 @@ help:
 	@echo "  make hbs_c7           HBS-C7 failure-domain isolation suite"
 	@echo "  make hbs_c8           HBS-C8 attractor decomposition and phase-space reduction"
 	@echo "  make hbs_c9           HBS-C9 singularity validation (C8 falsification attempt)"
+	@echo "  make hbs_c10          HBS-C10 predictive validation (attractor model accuracy)"
+	@echo "  make hbs_c12          HBS-C12 adversarial reality collapse suite"
+	@echo "  make hbs_c13          HBS-C13 attractor controllability & phase steering suite"
 
 # HBS-14 end-to-end system consistency: horus_system + horus_systolic_array
 sim_hbs14: $(TB)/tb_hbs14_system_integration.v $(SRC_CORE) $(RTL)/horus_systolic_array.v
@@ -425,4 +428,20 @@ hbs_c12: sim_hbs_c12
 	@echo ""
 	@echo "Outputs: HBS_C12_ADVERSARIAL.csv  HBS_C12_SUMMARY.log"
 	@echo "         docs/HBS_C12_RESULTS.md  docs/HORUS_ADVERSARIAL_BEHAVIOR.md"
+	@echo ""
+
+# ── HBS-C13: Attractor Controllability & Phase Steering Suite ─────────────────
+# 4 suites (C13A–D) × 7,528 cycles on horus_system DUT.
+sim_hbs_c13: $(TB)/tb_hbs_c13_attractor_control.v $(SRC_CORE)
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs_c13: sim_hbs_c13
+	@echo ""
+	@echo "Running HBS-C13 Attractor Controllability & Phase Steering Suite..."
+	$(VVP) sim_hbs_c13
+	@echo ""
+	$(PYTHON) analyze_hbs_c13_attractor_control.py
+	@echo ""
+	@echo "Outputs: HBS_C13_CONTROL.csv  HBS_C13_SUMMARY.log"
+	@echo "         docs/HBS_C13_RESULTS.md  docs/HORUS_ATTRACTOR_CONTROL_MODEL.md"
 	@echo ""
