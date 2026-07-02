@@ -1,0 +1,17 @@
+HBS_C17_VERDICT=A
+HBS_C17_LABEL=STRICTLY FEEDFORWARD
+CIS_COMPUTED=0.000000e+00
+FLD_TOTAL_LEAKAGE=0
+ASI_MAX=0.000000
+LAG_MAX_RHO=0.000000
+FEEDFORWARD_PROVEN=YES
+
+A5_LONG_HORIZON
+  accum_range=132048
+  computed_range=0
+
+FLD_DETAIL
+  A1: accum-ON vs accum-OFF: 0 leakage cycles / 500 total
+  A2: clr-periodic vs no-clr: 0 leakage cycles / 500 total
+  A3: forced-high vs forced-low: 0 leakage cycles / 250 total
+  A4: on-time clr vs late clr: 0 leakage cycles / 500 total

@@ -494,3 +494,19 @@ hbs_c16: sim_hbs_c16
 	@echo "Outputs: HBS_C16_CAUSAL_TRACE.csv  HBS_C16_SUMMARY.log"
 	@echo "         docs/HBS_C16_CAUSALITY_REPORT.md  docs/HORUS_CONTROL_CAUSALITY_MAP.md"
 	@echo ""
+
+# ── HBS-C17: Accumulation Feedback Closure Falsification ──────────────────────
+# 9 sub-tests × varying cycles = 8,500 cycles. Proves strict feedforwardness.
+sim_hbs_c17: $(TB)/tb_hbs_c17_feedback_closure.v $(SRC_CORE)
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs_c17: sim_hbs_c17
+	@echo ""
+	@echo "Running HBS-C17 Accumulation Feedback Closure Falsification Suite..."
+	$(VVP) sim_hbs_c17
+	@echo ""
+	$(PYTHON) analyze_hbs_c17_feedback_closure.py
+	@echo ""
+	@echo "Outputs: HBS_C17_FEEDBACK_CLOSURE.csv  HBS_C17_SUMMARY.log"
+	@echo "         docs/HBS_C17_FEEDBACK_CLOSURE.md  docs/HORUS_CAUSAL_CLOSURE_MAP.md"
+	@echo ""
