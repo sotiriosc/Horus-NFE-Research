@@ -1637,6 +1637,64 @@ mode_tag attack, and no hysteresis has been observed.
 
 ---
 
+## C18 Formal System Closure Principle
+
+> *"A well-formed arithmetic engine is one whose causal graph is a DAG —
+> no state reaches backward to recompute what has already been computed."*
+
+### The Principle
+
+HORUS v3 is a **Stateless Arithmetic Evaluator with Stateful Side-Channel Accounting**.
+
+This classification, the product of eleven experimental verification suites and 99,632+
+simulation cycles, is the formal identity of the system. The principle established by C18 is:
+
+> **The correctness and predictability of HORUS v3's arithmetic outputs depend only on the
+> current inputs. The system state — control policy and accumulated weight — runs in a
+> causally isolated side channel that cannot retroactively contaminate computation.**
+
+### Formal Closure
+
+The HBS verification program (C7–C17) has established four hard properties of HORUS v3:
+
+1. **Feedforward Arithmetic (C17):** `computed(t) = φ(op_a(t), op_b(t), op_sel(t))`.
+   Accumulation state `accum_reg` exerts zero influence on the arithmetic core — proven
+   by CIS=0, FLD=0, and ASI=NaN across 8,500 cycles of forced accumulator perturbation.
+
+2. **Accumulation-Only Control (C16):** `mode_tag` affects only the accumulation subsystem
+   (Levels 4–6 in the causal DAG). ALU outputs (`mant_sum`, `scale_reg`, `computed`, `result`)
+   are identical across all four control modes — proven by FLD=0 across 8,000 cycles.
+
+3. **Closed Attractor Set (C8, C9, C12, C15):** The four-attractor model {A1, A2, A3, A4}
+   is complete. No fifth attractor has been observed across 99,632+ cycles, including
+   44,000 cycles probing the only hypothesized fifth-attractor region (C9).
+
+4. **No Hysteresis (C9, C15, C17):** Attractor identity is not path-dependent. The current
+   epoch's input pattern determines the attractor; prior accumulation history does not.
+
+### Design Consequence
+
+The C18 closure principle implies the following design invariant that must hold for any
+future hardware revision, compiler modification, or mode extension of HORUS:
+
+> **Any modification to the accumulation subsystem (γ) or control subsystem (κ) must not
+> introduce any read path from `accum_reg`, `mode_tag`, or any accumulation-derived signal
+> into the arithmetic core (φ). This invariant is the structural definition of the
+> HORUS v3 architecture and must be enforced at the RTL level.**
+
+Violation of this invariant would not merely break a design choice — it would
+invalidate the formal closure theorem and require re-running the full HBS-C16/C17
+verification campaign against the modified RTL.
+
+### Reference
+
+See `docs/HORUS_SYSTEM_CLOSURE_THEOREM.md` for the complete formal specification.
+
+> The experimental program is closed. The system model is frozen.
+> HORUS_V3_FORMAL_CLOSURE_ISSUED: 2026-07-02
+
+---
+
 *Horus (Native Fractional Engine project) · Architecture Philosophy v3 ·
 Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate*
 *HBS-11 Validated: 2026-07-02 · HBS-12 Arithmetic Envelope added: 2026-07-02*
@@ -1656,3 +1714,6 @@ Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate
 *C13 Controllability Principle added: 2026-07-02*
 *C14 Attractor Computation Principle added: 2026-07-02*
 *C15 OOB Control Robustness Principle added: 2026-07-02*
+*C16 Control Causality Isolation Principle added: 2026-07-02*
+*C17 Accumulation Feedback Closure Principle added: 2026-07-02*
+*C18 Formal System Closure Theorem added: 2026-07-02*
