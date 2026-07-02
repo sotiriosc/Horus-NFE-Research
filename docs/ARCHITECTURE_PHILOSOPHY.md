@@ -537,10 +537,57 @@ None of these require measurement to predict — they are provable from the arit
 | [DESIGN_LIMITATIONS.md](DESIGN_LIMITATIONS.md) | Architectural trade-offs and v4 targets |
 | [README.md](../README.md) | Project overview, validation maturity, RTL map |
 | [BENCHMARKS.md](BENCHMARKS.md) | Inference benchmark methodology |
+| [HBS14_RESULTS.md](HBS14_RESULTS.md) | Full HBS-14 end-to-end test report |
+| [HORUS_END_TO_END_SYSTEM_REPORT.md](HORUS_END_TO_END_SYSTEM_REPORT.md) | System integration principal reference |
+
+---
+
+## HBS-14 System Integration Findings
+
+**Source:** HBS-14 End-to-End System Consistency Suite · 2026-07-02  
+**DUTs:** `horus_system` (NFE + pgate_ctrl), `horus_systolic_array` (4×4)  
+**Scope:** 2,643 simulation events · 4 policy modes · 6 test configurations
+
+### Interaction Effects
+
+**Policy and arithmetic are completely decoupled at the RTL level.** The `result` signal path from `horus_nfe` exits the always block before the policy decoder is entered. No policy mode — standard, bias-corrected, pre-scaled, or safe-accumulation — has any path to the `result` register. This decoupling was verified in 384 direct comparisons (zero mismatches).
+
+The accumulator path IS policy-dependent by design:
+- MODE_PRSC reduces each accumulated contribution by one exponent step. The net effect over 32 mixed-zone operations is a ≈2.5% reduction in accumulated total relative to MODE_STD.
+- MODE_SAFE prevents 32-bit accumulator wraparound. For workloads that do not overflow 32 bits, SAFE is identical to STD.
+- MODE_BIAS (with default LUT=0) is identical to MODE_STD. Population with non-zero LUT values is a compile-time calibration step.
+
+### Policy Interaction Behavior
+
+Rapid mode switching (every cycle, random mode selection, 500-cycle stream) produces **zero result interference**. HORUS v3 has no mode-context register and no cross-cycle mode state. Each operation sees exactly one mode; the mode has no memory.
+
+Mixed-mode accumulation is deterministic: the final accumulator value is uniquely determined by the sequence of (operand, mode) pairs. A scheduler that switches modes based on workload type produces predictable, reproducible accumulator trajectories.
+
+### System-Level Stability Conclusions
+
+1. **Regime-dependence does not compromise stability.** The three arithmetic regimes (stable, collapse, saturation) are sharply bounded and algebraically predictable. Sustained mixed-regime operation for 2,000 cycles showed no spreading of failure modes, no drift accumulation, and no entropy decay in the stable phase.
+
+2. **Failure modes are an architectural invariant, not a runtime variable.** At E=15, self-multiplication underflows with 100% probability regardless of operational history, surrounding operations, or policy mode. This is not a timing, stochastic, or context issue — it is the algebraic consequence of the exponent arithmetic: 15+15−32=−2 < 0.
+
+3. **Hardware flags are the authoritative failure signal.** `underflow_flag` and `exp_ovf_flag` are set by the arithmetic core and pass through the policy layer unchanged. Host software that relies on these flags for error detection can do so with full confidence that no policy mode will suppress them.
+
+4. **The systolic array is consistent with individual horus_nfe operations.** The 4×4 fill-pipeline produces deterministic row-differentiated outputs that reflect the exponent structure of input activations. The zero-input test confirms correct reset behavior.
+
+5. **pgate_ctrl comment inconsistency.** The first gate-rule comment in `horus_pgate_ctrl.v` incorrectly states `host_tile_depth=0 → unlimited`. The implementation is `count < 0` (unsigned), which is always false → gate closed. Valid accumulation requires `host_tile_depth ≥ 1`. The correct semantics are: 0 = power-off; 1..63 = MAC budget. This should be corrected in v4.
+
+### Final System Classification
+
+| Category | HORUS v3 Status |
+|---|---|
+| Fully Consistent System | **YES** — 5/5 checks consistent |
+| Regime-Dependent System | **YES** — three distinct regimes |
+| Masked Failure System | **NO** — flags are policy-invariant |
+| Contradictory System | **NO** — all HBS-11..13 confirmed |
+| Unstable System | **NO** — all failures are algebraic |
 
 ---
 
 *Horus (Native Fractional Engine project) · Architecture Philosophy v3 ·
 Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate*
 *HBS-11 Validated: 2026-07-02 · HBS-12 Arithmetic Envelope added: 2026-07-02*
-*HBS-13 Boundary Gap added: 2026-07-02*
+*HBS-13 Boundary Gap added: 2026-07-02 · HBS-14 System Integration added: 2026-07-02*

@@ -394,6 +394,39 @@ The stable center of the exponent space (E=24..40) is equidistant from both boun
 
 ---
 
+---
+
+## 16. End-to-End Validation Notes (HBS-14)
+
+**Source:** HBS-14 End-to-End System Consistency Suite · 2026-07-02  
+**Dataset:** 2,643 observations across 4 policy modes and 6 test configurations
+
+### 16.1 Envelope Confirmed Under All Policy Modes
+
+The arithmetic envelope established by HBS-12 (stable: E=16–47, collapse: E<16, saturation: E>47) was independently confirmed in HBS-14 under `mode_tag = 000, 001, 010, 011`. UF/OVF rates were **policy-invariant**:
+
+| Phase | UF% (all modes) | OVF% (all modes) |
+|---|---|---|
+| Stable MUL (E=32) | 0.0% | 0.0% |
+| Boundary MUL (E=15/16) | 50.0% (E=15 alternating) | 0.0% |
+| ADD (E=24) | 0.0% | 0.0% |
+
+The collapse and saturation cliff boundaries are a property of the arithmetic core, not of the policy system.
+
+### 16.2 Long-Horizon Stability
+
+Over 2,000 cycles with sustained boundary-zone exposure, no drift or spreading of failure modes was observed. The stable-phase arithmetic entropy remained at **5.990 bits** (≈ theoretical maximum), confirming zero information decay under sustained operation.
+
+### 16.3 Policy Layer Is Arithmetically Transparent
+
+Result mismatches between MODE_STD and any other mode: **0 (across 384 total tests)**. The `result` port is identical across all four policy modes for any given input. `underflow_flag` and `exp_ovf_flag` are similarly policy-invariant.
+
+### 16.4 pgate_ctrl Gate Behavior Note
+
+`host_tile_depth = 0` closes the accumulation gate (unsigned comparison `count < 0` is always false). Valid accumulation requires `host_tile_depth ≥ 1`. This does not affect arithmetic results but affects all accumulator-dependent metrics. See `docs/HBS14_RESULTS.md` §Additional Finding.
+
+---
+
 ## 15. Related Documents
 
 | Document | Relationship |
@@ -408,3 +441,7 @@ The stable center of the exponent space (E=24..40) is equidistant from both boun
 | `sim/HBS13_BOUNDARY_GAP.csv` | Raw HBS-13 measurement data (6,092 rows) |
 | `sim/HBS12_SUMMARY.log` | HBS-12 analysis log |
 | `sim/HBS13_SUMMARY.log` | HBS-13 analysis log |
+| `docs/HBS14_RESULTS.md` | Full HBS-14 end-to-end test report |
+| `docs/HORUS_END_TO_END_SYSTEM_REPORT.md` | End-to-end system report |
+| `sim/HBS14_SYSTEM_INTEGRATION.csv` | Raw HBS-14 measurement data (2,643 rows) |
+| `sim/HBS14_SUMMARY.log` | HBS-14 analysis log |

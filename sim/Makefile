@@ -30,7 +30,7 @@ SRC_SYSTOLIC := $(RTL)/horus_systolic_array.v $(RTL)/horus_controller.v \
                 $(RTL)/horus_input_buffer.v $(RTL)/horus_top.v
 
 # =============================================================================
-.PHONY: all hbs11 hbs12 hbs13
+.PHONY: all hbs11 hbs12 hbs13 hbs14
 all: sim_mesh
 	@echo ""
 	@echo "Running Horus Mesh Testbench (7/7 tests expected)..."
@@ -233,6 +233,7 @@ clean:
 	rm -f HBS11_POLICY_VALIDATION.csv HBS11_POLICY_SUMMARY.log sim_hbs11
 	rm -f HBS12_ARITHMETIC_BOUNDARY.csv HBS12_SUMMARY.log sim_hbs12
 	rm -f HBS13_BOUNDARY_GAP.csv HBS13_SUMMARY.log sim_hbs13
+	rm -f HBS14_SYSTEM_INTEGRATION.csv HBS14_SUMMARY.log sim_hbs14
 	@echo "Cleaned generated binaries and artifacts."
 
 .PHONY: help
@@ -253,4 +254,18 @@ help:
 	@echo "  make hbs11            HBS-11 execution policy validation suite"
 	@echo "  make hbs12            HBS-12 arithmetic boundary mapping suite"
 	@echo "  make hbs13            HBS-13 boundary gap characterization suite"
+	@echo "  make hbs14            HBS-14 end-to-end system consistency suite"
+
+# HBS-14 end-to-end system consistency: horus_system + horus_systolic_array
+sim_hbs14: $(TB)/tb_hbs14_system_integration.v $(SRC_CORE) $(RTL)/horus_systolic_array.v
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs14: sim_hbs14
+	@echo ""
+	@echo "Running HBS-14 End-to-End System Consistency Suite..."
+	$(VVP) sim_hbs14
+	@echo ""
+	$(PYTHON) analyze_hbs14.py
+	@echo ""
+	@echo "Output: HBS14_SYSTEM_INTEGRATION.csv + HBS14_SUMMARY.log"
 	@echo ""
