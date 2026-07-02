@@ -1,0 +1,78 @@
+========================================================================
+  HBS-C9: SINGULARITY VALIDATION — C8 ATTRACTOR MODEL FALSIFICATION
+  80 runs  |  20 seeds × 4 workloads × 500 stress + 50 recovery
+========================================================================
+
+  S1A ──────────────────────────────────────────────────
+    TTI: min=6, max=31, mean=13.8
+    Dominant attractor assignment: {'A1': 20, 'A2': 0, 'A3': 0, 'A4': 0, 'NEW': 0}
+    NEW-labeled epochs: 0
+    Mean limit-cycle score: 0.000
+    Recovery not achieved: 0/20
+
+  S1B ──────────────────────────────────────────────────
+    TTI: min=12, max=62, mean=27.6
+    Dominant attractor assignment: {'A1': 12, 'A2': 8, 'A3': 0, 'A4': 0, 'NEW': 0}
+    NEW-labeled epochs: 0
+    Mean limit-cycle score: 0.000
+    Recovery not achieved: 0/20
+
+  S1C ──────────────────────────────────────────────────
+    TTI: min=14, max=63, mean=33.8
+    Dominant attractor assignment: {'A1': 19, 'A2': 1, 'A3': 0, 'A4': 0, 'NEW': 0}
+    NEW-labeled epochs: 0
+    Mean limit-cycle score: 0.000
+    Recovery not achieved: 0/20
+
+  S1D ──────────────────────────────────────────────────
+    TTI: min=11, max=108, mean=37.4
+    Dominant attractor assignment: {'A1': 12, 'A2': 4, 'A3': 0, 'A4': 4, 'NEW': 0}
+    NEW-labeled epochs: 0
+    Mean limit-cycle score: 0.000
+    Recovery not achieved: 0/20
+
+────────────────────────────────────────────────────────────────────────
+  FALSIFICATION TESTS (F1–F5)
+────────────────────────────────────────────────────────────────────────
+
+  F1 — All behavior explainable by A1+A2+A3+A4?
+    100.0% epochs classified within A1-A4 (0.0% NEW)
+    Threshold < 5% NEW for PASS. Result: PASS
+
+  F2 — Any run in unrepresentable state?
+    0 NEW-labeled epochs observed
+    Result: PASS (no unrepresentable states)
+
+  F3 — Any run requires a new attractor category?
+    NEW epochs by workload: {'S1A': 0, 'S1B': 0, 'S1C': 0, 'S1D': 0}
+    Concentrated in S1-D: True
+    Result: PASS (no new category needed)
+
+  F4 — Does interaction produce merged/bifurcated/hysteretic/lock-in?
+    DETECTED: MERGED ATTRACTOR in S1-D (not dominated by A1 or A2)
+    Bimodal TTI: False
+    Hysteresis runs: 0
+    Lock-in runs: 0
+    S1-D merged attractor: True
+    Result: FAIL — interaction effects detected
+
+  F5 — Does S1-D collapse to existing attractors?
+    S1-D dominant assignments: A1=12, A2=4, NEW=0
+    S1-D mean limit-cycle score: 0.000
+    Result: COLLAPSE to existing attractors
+
+========================================================================
+  VERDICT: C8 attractor model SURVIVES
+========================================================================
+
+  Model explanation: 100.0% of all epochs classified within A1-A4
+  NEW-labeled epochs: 0 / 2560 = 0.0%
+
+  S1 singularity does NOT produce a 5th attractor.
+  All observed behavior is explainable as a superposition of A1+A2+A3+A4.
+  C8 multi-attractor model is internally consistent.
+  A1 and A2 ARE structurally independent — coupling in S1-D does not
+  create a new equilibrium; it modifies the trajectory within the
+  existing attractor landscape.
+
+========================================================================

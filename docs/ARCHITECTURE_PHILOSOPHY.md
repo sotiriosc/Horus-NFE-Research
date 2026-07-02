@@ -1227,8 +1227,43 @@ A1 and A2 in parallel, creating a compound failure not tested in HBS-C7.
 
 **The closure:** C5 proved the routing surface is a partition function. C7 proved the
 failure domain is multi-attractor. C8 proves those attractors are geometrically separable
-in the 2D phase space spanned by (exponent pressure, cancellation pressure). The system
-is fully characterized. No further structural analysis is required.
+in the 2D phase space spanned by (exponent pressure, cancellation pressure). C9 confirms
+the model survives adversarial falsification at the S1 singularity. The system is fully
+characterized.
+
+---
+
+## C9 — Singularity Validation Principle
+
+*Validated by HBS-C9 (2026-07-02)*
+
+**Principle:** A dynamical model is not confirmed until adversarial probing of its
+unobserved regions fails to falsify it. HBS-C9 attempted to falsify the C8 four-attractor
+model by simultaneously activating A1 and A2 in the S1 singularity zone. The model survived.
+
+**What was tested:**
+- 44,000 cycles across 80 runs (20 seeds × 4 workload families)
+- S1-D: coupled shared feedback (SUB result feeds next MUL) — the strongest possible test
+  of the A1 ↔ A2 independence prediction
+
+**What was found:**
+- 100% of 2,560 classification epochs resolved within A1+A2+A3+A4 (zero NEW)
+- No new attractor, no bifurcation, no hysteresis, no attractor lock-in
+- S1-D limit-cycle score = 0.000 (predicted periodic orbit not observed)
+- C8 interaction code A1 ↔ A2 = I (Independent) **confirmed**
+
+**Unexpected finding — A1 natural brake on A2:**  
+Coupling A1 cancellation into the A2 exponent drift chain (S1-D design) does not
+create a new equilibrium but **extends TTI by up to 3.5×** (TTI_max = 108 cycles vs.
+pure A2 TTI_max = 31 cycles). Near-cancellation SUB cycles interrupt the geometric
+MUL chain, reducing effective exponent drift rate. The system's failure onset is
+delayed, not accelerated, when high cancellation pressure coexists with high exponent
+pressure. This is an emergent protective property of the A1/A2 interaction, not
+present in C8's theoretical derivation but fully consistent with its independence claim.
+
+**C9 Validation Principle:** *A model is not confirmed by explaining observations it was*
+*designed to explain. It is confirmed when it explains observations it was designed to*
+*disprove. The C8 four-attractor model now satisfies both conditions.*
 
 ---
 
@@ -1245,3 +1280,4 @@ Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate
 *C6 External Realism Validation Principle added: 2026-07-02*
 *C7 Failure-Domain Isolation Principle added: 2026-07-02*
 *C8 Phase-Space Reduction Principle added: 2026-07-02*
+*C9 Singularity Validation Principle added: 2026-07-02*

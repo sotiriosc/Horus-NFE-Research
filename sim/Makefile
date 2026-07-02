@@ -30,7 +30,7 @@ SRC_SYSTOLIC := $(RTL)/horus_systolic_array.v $(RTL)/horus_controller.v \
                 $(RTL)/horus_input_buffer.v $(RTL)/horus_top.v
 
 # =============================================================================
-.PHONY: all hbs11 hbs12 hbs13 hbs14 hbs_c2 hbs_c5 hbs_c6 hbs_c7 hbs_c8
+.PHONY: all hbs11 hbs12 hbs13 hbs14 hbs_c2 hbs_c5 hbs_c6 hbs_c7 hbs_c8 hbs_c9
 all: sim_mesh
 	@echo ""
 	@echo "Running Horus Mesh Testbench (7/7 tests expected)..."
@@ -248,6 +248,9 @@ clean:
 	      hbs_c7_failure_heatmap.png hbs_c7_r2_exponent_drift.png \
 	      hbs_c7_r1_residual_growth.png hbs_c7_recovery_comparison.png
 	rm -f HBS_C8_ATTRACTOR_MODEL.csv HBS_C8_SUMMARY.log HBS_C8_PHASE_SPACE.png
+	rm -f HBS_C9_SINGULARITY.csv HBS_C9_SUMMARY.log sim_hbs_c9 \
+	      hbs_c9_attractor_timeline.png hbs_c9_s1d_e_sawtooth.png \
+	      hbs_c9_tti_distribution.png hbs_c9_phase_trajectory.png
 	@echo "Cleaned generated binaries and artifacts."
 
 .PHONY: help
@@ -274,6 +277,7 @@ help:
 	@echo "  make hbs_c6           HBS-C6 adversarial real-world workload stress-test"
 	@echo "  make hbs_c7           HBS-C7 failure-domain isolation suite"
 	@echo "  make hbs_c8           HBS-C8 attractor decomposition and phase-space reduction"
+	@echo "  make hbs_c9           HBS-C9 singularity validation (C8 falsification attempt)"
 
 # HBS-14 end-to-end system consistency: horus_system + horus_systolic_array
 sim_hbs14: $(TB)/tb_hbs14_system_integration.v $(SRC_CORE) $(RTL)/horus_systolic_array.v
@@ -369,4 +373,22 @@ hbs_c8:
 	@echo "Outputs: HBS_C8_ATTRACTOR_MODEL.csv  HBS_C8_SUMMARY.log"
 	@echo "         HBS_C8_PHASE_SPACE.png"
 	@echo "         docs/HBS_C8_ATTRACTOR_MODEL.md  docs/HORUS_PHASE_SPACE_REDUCTION.md"
+	@echo ""
+
+# ── HBS-C9: Singularity Validation ───────────────────────────────────────────
+# 20 seeds × 4 workloads × 550 cycles = 44,000 cycles on horus_system DUT.
+sim_hbs_c9: $(TB)/tb_hbs_c9_singularity.v $(SRC_CORE)
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs_c9: sim_hbs_c9
+	@echo ""
+	@echo "Running HBS-C9 Singularity Validation..."
+	$(VVP) sim_hbs_c9
+	@echo ""
+	$(PYTHON) analyze_hbs_c9_singularity.py
+	@echo ""
+	@echo "Outputs: HBS_C9_SINGULARITY.csv  HBS_C9_SUMMARY.log"
+	@echo "         docs/HBS_C9_RESULTS.md  docs/HORUS_S1_VALIDATION.md"
+	@echo "         hbs_c9_attractor_timeline.png  hbs_c9_s1d_e_sawtooth.png"
+	@echo "         hbs_c9_tti_distribution.png  hbs_c9_phase_trajectory.png"
 	@echo ""
