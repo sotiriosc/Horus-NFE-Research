@@ -1,0 +1,5 @@
+# synth_script.ys
+read_verilog horus_nfe.v
+synth -top horus_nfe
+# This will print the area report to your terminal
+stat

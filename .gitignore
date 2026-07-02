@@ -1,0 +1,18 @@
+# Simulation build artifacts
+sim/sim_*
+sim/horus_sim
+sim/*.vcd
+sim/fidelity_benchmark.csv
+sim/fidelity_plot.png
+sim/fidelity_error_plot.png
+sim/nfe_sim
+sim/tb_*
+sim/horus_*_sim
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor
+*.swp
+*~

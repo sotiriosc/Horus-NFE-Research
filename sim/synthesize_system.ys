@@ -1,0 +1,25 @@
+# yosys script: synthesize_system.ys
+
+# 1. Read all Verilog source modules
+read_verilog horus_nfe.v
+read_verilog horus_systolic_array.v
+read_verilog horus_controller.v
+read_verilog horus_clock_divider.v
+read_verilog horus_input_buffer.v
+read_verilog horus_top.v
+
+# 2. Check design hierarchy consistency
+hierarchy -check -top horus_top
+
+# 3. High-level optimization, dead-code elimination, and FSM extraction
+proc; opt; fsm; opt
+
+# 4. Map arithmetic operators to generic hardware gate cells
+techmap; opt
+
+# 5. Map to physical target architecture (e.g., standard cell primitives)
+abc -g gates
+
+# 6. Clean up residual wires and display final silicon utilization report
+clean
+stat
