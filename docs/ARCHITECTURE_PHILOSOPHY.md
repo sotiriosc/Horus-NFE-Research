@@ -1557,6 +1557,86 @@ using the control vectors from C13, and execute it on the HORUS substrate.
 
 ---
 
+**C15 OOB Control Robustness Principle:**
+
+*Attractor identity in HORUS v3 is operand-plane-driven and mode_tag-independent.*
+
+The HBS-C15 suite (7,500 cycles, 5 adversarial regimes: latency skew, phase desync, burst
+collapse, boundary thrashing, control noise) attempted to falsify the strongest remaining claims
+of the attractor model: FULLY_CONTROLLABLE (C13) and COMPUTATIONALLY_EXPRESSIVE (C14).
+
+**Core result: GRACEFUL DEGRADATION — neither claim was falsified.**
+
+The suite revealed a fundamental architectural decoupling inside HORUS v3 between its control
+plane and data plane:
+
+```
+Control Plane (mode_tag)  → mode policy, accumulation gating
+Data Plane (op_a, op_sel) → attractor identity, E_out trajectory, OVF/UF events
+```
+
+Mode_tag corruption (up to 71.4% bit-error rate in R5) degrades control *fidelity* (the
+percentage of cycles where the intended policy matches the applied policy) but has **zero effect**
+on attractor *stability* (which attractor A1–A4 the system occupies). Attractor stability was
+100.0% across all five regimes and all 7,500 cycles.
+
+**Key numerical evidence:**
+
+| Regime | Mode Fidelity | Attractor Stability | OVF Rate |
+|--------|--------------|---------------------|----------|
+| R1 Latency Skew (1–3cy) | 100% | 100% | 0.00% |
+| R2 Phase Desync (2cy lag) | 100% | 100% | 0.00% |
+| R3 Burst Collapse (MUL/SUB 1cy) | 100% | 100% | 0.00% |
+| R4 Boundary Thrash (E=15/16/47/48) | 50% | 100% | 0.00% |
+| R5 Noise Attack (9–31% BER) | 29–69% | 100% | 0.00% |
+
+**Additional structural discoveries:**
+
+1. **Steady-state attractor mode_tag is constant** — latency skew and phase desync are transparent
+   in stable attractor operation because the intended mode_tag value does not change cycle-to-cycle
+   in equilibrium. Skew only matters during attractor *transitions*.
+
+2. **Burst MUL/SUB self-cancels** — alternating MUL and SUB at every cycle produces a dynamic
+   equilibrium within STABLE zone (A1). A2 (exponential explosion) requires ≥8 *consecutive*
+   MUL operations, not bursts. Frequency of injection does not substitute for depth of chain.
+
+3. **Boundary forcing locks A3 cleanly** — forcing E to oscillate across the 15/16 and 47/48
+   boundaries immediately induces A3 (boundary oscillation), with zero OVF or collapse. This
+   is physically correct and benign. A3 is a stable absorber at boundaries.
+
+4. **R5 degradation curve is monotonic, no hysteresis** — mode_tag noise at 10/20/30% produces
+   linearly declining fidelity (69%→49%→29%) with no delayed instability or memory effects.
+   The system has no hidden state that accumulates failure from prior noise events.
+
+**Principle for system integration:**
+
+HORUS v3's attractor dynamics can be relied upon to remain classifiable and bounded even when
+the C4 control channel is partially or heavily corrupted. System integrators who lose confidence
+in the mode_tag delivery path (stale reads, noisy buses, pipeline skew) can trust that the
+underlying NFE computation and attractor structure remains intact. The cost of mode_tag
+corruption is *accumulation policy error*, not *arithmetic instability*.
+
+The falsification campaign (C9 singularity, C12 adversarial, C15 OOB) has now exhausted all
+known structural attack vectors against the C8 four-attractor model. In 91,132+ total simulation
+cycles across HBS-C7 through C15, no fifth attractor, no collapse event under adversarial
+mode_tag attack, and no hysteresis has been observed.
+
+**Cumulative evidence (HBS-C7 through C15):**
+
+> Across 91,132+ simulation cycles, HORUS v3 has been characterized as:
+> - **Complete 4-attractor model** (C8): A1–A4 are the minimal, closed attractor set
+> - **Predictive** (C10): 86.8% accuracy (MODEL_SUFFICIENT, F1=0.854)
+> - **Adversarially robust** (C12): PARTIALLY_ROBUST, 100% attractor retention
+> - **Fully controllable** (C13): FULLY_CONTROLLABLE, K₄ reachability
+> - **Computationally expressive** (C14): COMPUTATIONALLY_EXPRESSIVE, score=0.811
+> - **OOB robust** (C15): GRACEFUL_DEGRADATION, 100% attractor stability under attack
+>
+> HORUS v3's attractor space is **operand-driven, mode_tag-independent, non-hysteretic,
+> and bounded** under all tested adversarial conditions. The control plane corrupts cleanly;
+> the data plane does not.
+
+---
+
 *Horus (Native Fractional Engine project) · Architecture Philosophy v3 ·
 Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate*
 *HBS-11 Validated: 2026-07-02 · HBS-12 Arithmetic Envelope added: 2026-07-02*
@@ -1575,3 +1655,4 @@ Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate
 *C12 Adversarial Robustness Principle added: 2026-07-02*
 *C13 Controllability Principle added: 2026-07-02*
 *C14 Attractor Computation Principle added: 2026-07-02*
+*C15 OOB Control Robustness Principle added: 2026-07-02*

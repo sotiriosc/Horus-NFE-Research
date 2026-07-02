@@ -462,3 +462,19 @@ hbs_c14: sim_hbs_c14
 	@echo "Outputs: HBS_C14_COMPUTATION.csv  HBS_C14_SUMMARY.log"
 	@echo "         docs/HBS_C14_RESULTS.md  docs/HORUS_ATTRACTOR_COMPUTATION_MODEL.md"
 	@echo ""
+
+# ── HBS-C15: OOB Controllability Falsification Suite ──────────────────────────
+# 5 adversarial regimes × 1,500 cycles = 7,500 cycles on horus_system DUT.
+sim_hbs_c15: $(TB)/tb_hbs_c15_oob_falsification.v $(SRC_CORE)
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs_c15: sim_hbs_c15
+	@echo ""
+	@echo "Running HBS-C15 OOB Controllability Falsification Suite..."
+	$(VVP) sim_hbs_c15
+	@echo ""
+	$(PYTHON) analyze_hbs_c15_oob.py
+	@echo ""
+	@echo "Outputs: HBS_C15_OOB.csv  HBS_C15_SUMMARY.log"
+	@echo "         docs/HBS_C15_RESULTS.md  docs/HORUS_CONTROL_ROBUSTNESS.md"
+	@echo ""

@@ -1,0 +1,21 @@
+HBS_C15_KEY_ANSWER=B
+HBS_C15_LABEL=GRACEFUL DEGRADATION
+AVG_CONTROL_FIDELITY=0.7975
+AVG_ATTRACTOR_STABILITY=1.0000
+MAX_COLLAPSE_RATE=0.000000
+MIN_TTF=0
+HYSTERESIS_DETECTED=NO
+C13_FALSIFIED=NO
+C14_FALSIFIED=NO
+
+PER_REGIME
+  R0: fidelity=1.000 stability=1.000 collapse=0.000000 ttf=1500
+  R1: fidelity=1.000 stability=1.000 collapse=0.000000 ttf=1500
+  R2: fidelity=1.000 stability=1.000 collapse=0.000000 ttf=1500
+  R3: fidelity=0.500 stability=1.000 collapse=0.000000 ttf=1
+  R4: fidelity=0.487 stability=1.000 collapse=0.000000 ttf=0
+
+R5_DEGRADATION
+  noise=9.4%: fidelity=0.686 stability=1.000
+  noise=18.8%: fidelity=0.490 stability=1.000
+  noise=31.2%: fidelity=0.286 stability=1.000
