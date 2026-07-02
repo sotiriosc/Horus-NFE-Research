@@ -544,6 +544,114 @@ None of these require measurement to predict — they are provable from the arit
 | [HORUS_SYSTEM_UTILIZATION_BLUEPRINT.md](HORUS_SYSTEM_UTILIZATION_BLUEPRINT.md) | Runtime strategy; mode selection guide; deployment configurations |
 | [HORUS_C1_COMPILER_SPEC.md](HORUS_C1_COMPILER_SPEC.md) | Compiler specification; region classification; ABMP protocol |
 | [HORUS_SYSTEM_COMPILATION_MODEL.md](HORUS_SYSTEM_COMPILATION_MODEL.md) | Compilation model; layer separation diagrams; full pipeline |
+| [HORUS_C3_WORKLOAD_EMBEDDING.md](HORUS_C3_WORKLOAD_EMBEDDING.md) | Workload embedding; phase scheduler; Phase Transport protocol |
+| [HORUS_PHASE_SCHEDULER_MODEL.md](HORUS_PHASE_SCHEDULER_MODEL.md) | Visual phase scheduler model; class flow diagrams |
+| [HORUS_C2_LIVE_SYSTEM_REPORT.md](HORUS_C2_LIVE_SYSTEM_REPORT.md) | Live system measurement; measured occupancy baseline |
+
+---
+
+## C3 — Workload Embedding Principle
+
+**Source:** HORUS C3 Workload Embedding Specification · 2026-07-02  
+**Authority:** HBS-11..HBS-C2 measured hardware behavior + C1 compiler spec
+
+### Principle Statement
+
+> **The compiler does not optimize arithmetic outcomes — it optimizes region occupancy.**
+
+C1 established that the compiler is a phase-space router at the instruction level: given a single operation, it classifies the operand's exponent and selects the appropriate mode_tag and execution region.
+
+C3 extends this principle to the **workload graph level**. Before a single instruction is emitted, C3 computes the expected **phase embedding profile** of the entire workload: the predicted distribution of operations across the four arithmetic regions (Stable, Transition, Collapse, Saturation), the dominant region, and the risk classification. Scheduling decisions — tile depth, mode escalation, ABMP triggers, epoch boundaries — are derived from this profile.
+
+### The Compiler as Phase-Space Scheduler
+
+```
+C1 (instruction level):  single operation → region → mode_tag
+C3 (workload level):     workload graph   → region distribution profile
+                                            → scheduling policy
+                                            → epoch structure
+                                            → ABMP pre-placement
+```
+
+A phase-space scheduler does not ask "what is the best way to execute operation X?" It asks "what is the expected behavior of this workload in the HORUS exponent space, and how should execution be sequenced to keep operations in the regions where the hardware physics produce the desired behavior?"
+
+This is a fundamentally different objective from a numerical optimizer:
+
+| Optimizer (not HORUS C3) | Phase-Space Scheduler (HORUS C3) |
+|---|---|
+| Minimizes arithmetic error | Maximizes stable-band occupancy |
+| Adapts to runtime values | Uses static workload graph analysis |
+| May modify computation | Only sequences and routes |
+| May choose between algorithms | Routes a fixed algorithm to fixed regions |
+| Views exponents as continuous | Treats exponent space as discrete phase topology |
+
+### Region Occupancy as the Scheduling Objective
+
+HBS-C2 measured 59.3% stable-band occupancy under mixed continuous stimulus. This is the reference baseline for a correctly embedded workload. A C3 scheduler that allows stable-band occupancy to fall below 40% is misrouting workloads — it is sending computation into boundary zones unnecessarily.
+
+The four regions are not equally weighted in importance:
+
+```
+STABLE (E=16–47):     Primary compute execution — maximize occupancy
+TRANSITION (E≈16,47): Boundary management — minimize dwell time
+COLLAPSE (E=0–15):    Routing zone — zero accumulation; rescue or bypass
+SATURATION (E=48–63): Ceiling zone — zero accumulation; clamp or bypass
+```
+
+The correct scheduling objective is:
+```
+maximize:  stable_band_fraction
+subject to: depth_constraints (C1 §1.5)
+            mode_rules (C1 §1.4)
+            class_rules (C3 §1.4)
+            hardware_physics_immutable
+```
+
+### Formal Workload Embedding
+
+Every workload that enters the C3 layer must produce a **phase embedding profile** before any instructions are emitted. This profile is a static analysis output that answers:
+
+1. What percentage of operations will land in each region?
+2. What is the dominant region?
+3. What is the risk classification (LOW / MEDIUM / HIGH)?
+4. Where are the epoch boundaries?
+5. Are ABMP triggers pre-placed?
+
+The profile is deterministic — the same workload graph always produces the same profile. No runtime adaptation, machine learning, or probabilistic inference is used.
+
+### Phase Transport: Boundary Physics as a Scheduling Feature
+
+The Thoth Rollover property of the ADD operation (HBS-13A) provides a deterministic phase boundary crossing tool:
+
+```
+ADD(x, x) where f_x ≥ 32:
+  E_result = E_x + 1    (Thoth Rollover: f + f ≥ 64)
+  f_result = 2*(f_x − 32)
+```
+
+At E=15 with f≥32, this moves a codeword from the Collapse routing zone to the Transition zone (E=16) in a single operation. This is **Phase Transport** — a deterministic architectural rescue mechanism, formally enabled by the C3 layer.
+
+**Phase Transport is not a side-effect.** It is the compiler's intentional use of a documented hardware property to perform controlled phase-space movement. The hardware physics are unchanged; the compiler uses them as a scheduling primitive.
+
+The asymmetric mirror at E=47 (ADD with f≥32 pushes to E=48 = saturation) is a **hazard**, not a rescue. The C3 scheduler explicitly prevents ADD operations on E=47 operands with f≥32 (Scheduling Rule S4, Invariant CI-6).
+
+| Boundary | ADD behavior | Compiler role |
+|---|---|---|
+| E=15, f≥32 → E=16 | Thoth Rollover → Phase Transport | EXPLOIT: rescue from collapse |
+| E=47, f≥32 → E=48 | Thoth Push → Saturation entry | PREVENT: prohibit ADD here |
+
+### The Complete Compiler Stack
+
+```
+Hardware physics    →  Fixed. Immutable. Source of truth (HBS-11..C2).
+C1 (instruction)   →  Single-op routing: region → mode_tag → tile_depth.
+C3 (workload)      →  Workload-level scheduling: class → profile → epoch plan.
+                       Phase Transport pre-placement.
+                       ABMP trigger scheduling.
+                       Normalization epoch insertion.
+```
+
+C3 does not replace C1. It operates one level above: it produces the workload-level plan, which C1 then executes instruction-by-instruction. Together they constitute the complete HORUS compiler routing stack.
 
 ---
 
@@ -736,3 +844,4 @@ Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate
 *HBS-13 Boundary Gap added: 2026-07-02 · HBS-14 System Integration added: 2026-07-02*
 *Structural Decoupling Proof added: 2026-07-02 · HORUS_V3_FINAL_SPEC issued: 2026-07-02*
 *Compiler Separation Principle (HBS-C1) added: 2026-07-02*
+*C3 Workload Embedding Principle added: 2026-07-02*
