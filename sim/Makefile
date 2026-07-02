@@ -281,6 +281,7 @@ help:
 	@echo "  make hbs_c10          HBS-C10 predictive validation (attractor model accuracy)"
 	@echo "  make hbs_c12          HBS-C12 adversarial reality collapse suite"
 	@echo "  make hbs_c13          HBS-C13 attractor controllability & phase steering suite"
+	@echo "  make hbs_c14          HBS-C14 attractor-to-computation synthesis suite"
 
 # HBS-14 end-to-end system consistency: horus_system + horus_systolic_array
 sim_hbs14: $(TB)/tb_hbs14_system_integration.v $(SRC_CORE) $(RTL)/horus_systolic_array.v
@@ -444,4 +445,20 @@ hbs_c13: sim_hbs_c13
 	@echo ""
 	@echo "Outputs: HBS_C13_CONTROL.csv  HBS_C13_SUMMARY.log"
 	@echo "         docs/HBS_C13_RESULTS.md  docs/HORUS_ATTRACTOR_CONTROL_MODEL.md"
+	@echo ""
+
+# ── HBS-C14: Attractor-to-Computation Synthesis Suite ─────────────────────────
+# 5 suites (C14A–E) × 7,904 cycles on horus_system DUT.
+sim_hbs_c14: $(TB)/tb_hbs_c14_attractor_computation.v $(SRC_CORE)
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs_c14: sim_hbs_c14
+	@echo ""
+	@echo "Running HBS-C14 Attractor-to-Computation Synthesis Suite..."
+	$(VVP) sim_hbs_c14
+	@echo ""
+	$(PYTHON) analyze_hbs_c14_attractor_computation.py
+	@echo ""
+	@echo "Outputs: HBS_C14_COMPUTATION.csv  HBS_C14_SUMMARY.log"
+	@echo "         docs/HBS_C14_RESULTS.md  docs/HORUS_ATTRACTOR_COMPUTATION_MODEL.md"
 	@echo ""

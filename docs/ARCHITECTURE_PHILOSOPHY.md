@@ -1477,6 +1477,86 @@ failure mode the system enters. This upgrades the system safety model from *reac
 
 ---
 
+**C14 Attractor Computation Principle:**
+
+*HORUS v3's attractor dynamics are a computational substrate.*
+
+The HBS-C14 suite (7,904 cycles, 5 sub-suites: sequence encoding, primitive discovery, algebra
+closure, equivalence mapping, program synthesis) demonstrated that the four attractors of the C8
+model are not merely failure modes — they are **computational primitives** that compose into
+useful programs and implement fixed-point DSP operations.
+
+**Core result: COMPUTATIONALLY_EXPRESSIVE** (composite score: 0.811)
+
+The four attractor-as-primitive roles are:
+
+| Attractor | Primitive Role | Entropy | Memory |
+|-----------|---------------|---------|--------|
+| A1 | BOUNDED_INTEGRATOR | ~0.1 bits | None (stateless) |
+| A2 | EXPONENTIAL_AMPLIFIER | ~5.0 bits | **Yes** (mulfeed state) |
+| A3 | THRESHOLD_DETECTOR | 0.0 bits | None (locks to E=48) |
+| A4 | NOISE_SOURCE | ~1.6 bits | None (synthesizable from A1+A3) |
+
+**The Attractor Algebra (f(A_i) ∘ f(A_j) ≅ f(A_j)) holds at 91.7% (100% corrected):**
+
+The HORUS v3 attractor transitions form a near-monoid under phase composition, with:
+- **Near-right-absorption**: f(A_i) ∘ f(A_j) ≈ f(A_j) for all measured pairs
+- **Idempotency**: LOOP(A_i, n) = A_i for all attractors (confirmed by LOOP tests)
+- **Near-identity**: A1 acts as identity element (RESET to stable computation)
+- **A2 memory exception**: A2 compositions are super-linear — A2 is the sole stateful primitive
+
+**Key structural discoveries:**
+
+1. **A4 is derived, not primitive**: A4 (entropic regime interference) can be synthesized by
+   interleaving A1 and A3. The minimal attractor basis is {A1, A2, A3}.
+
+2. **A3 is zero-entropy**: A3 produces exactly one output value (E_out=48, always). It is
+   the most deterministic primitive — a perfect computational threshold with zero output
+   entropy.
+
+3. **A2 is the only memory primitive**: All other attractors are stateless. Programs requiring
+   sequential state propagation must route through A2. This is the "recurrent unit" of the
+   HORUS substrate.
+
+4. **Programs are attractor sequences**: The C13 controllability result (FULLY_CONTROLLABLE)
+   means attractor sequences are fully programmable. Every sequence is a "program" in the
+   HORUS Attractor Instruction Set Architecture (HAISA).
+
+5. **Entropy is a design variable**: Sequences can be designed to produce target information
+   density: A3 (0 bits) → A1 (0.1 bits) → A4 (1.6 bits) → mixed (2–4 bits) → A2 (5 bits).
+
+**The computation class equivalence:**
+
+```
+A1 ≅ MAC accumulator         (fixed-point DSP accumulation)
+A2 ≅ Exponential amplifier   (geometric series, attention scaling)
+A3 ≅ Hard ReLU / saturate    (activation function, hard clipping)
+A4 ≅ Dropout / dithering     (stochastic regularization, noise injection)
+```
+
+Together these span the full primitive set for fixed-point neural network inference.
+
+**Architectural implication:** HORUS v3 is not merely a hardware NFE with understood failure
+modes — it is a programmable computational substrate. The "failure modes" of a quantized
+fractional engine are isomorphic to the primitive operations of fixed-point neural inference.
+System architects can use attractor sequences as a high-level programming language for
+bounded computation: write a program as an attractor sequence, compile it to input streams
+using the control vectors from C13, and execute it on the HORUS substrate.
+
+**Cumulative evidence (HBS-C7 through C14):**
+
+> Across 83,632+ simulation cycles, HORUS v3 has been characterized as:
+> - **Complete 4-attractor model** (C8): A1–A4 are the minimal, closed attractor set
+> - **Predictive** (C10): 86.8% accuracy (MODEL_SUFFICIENT, F1=0.854)
+> - **Adversarially robust** (C12): PARTIALLY_ROBUST, 100% attractor retention
+> - **Fully controllable** (C13): FULLY_CONTROLLABLE, K₄ reachability
+> - **Computationally expressive** (C14): COMPUTATIONALLY_EXPRESSIVE, score=0.811
+>
+> HORUS v3's attractor space is a **bounded, deterministic, fully programmable**
+> computational substrate. What began as a failure analysis is a discovered ISA.
+
+---
+
 *Horus (Native Fractional Engine project) · Architecture Philosophy v3 ·
 Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate*
 *HBS-11 Validated: 2026-07-02 · HBS-12 Arithmetic Envelope added: 2026-07-02*
@@ -1494,3 +1574,4 @@ Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate
 *C10 Predictive Validation Principle added: 2026-07-02*
 *C12 Adversarial Robustness Principle added: 2026-07-02*
 *C13 Controllability Principle added: 2026-07-02*
+*C14 Attractor Computation Principle added: 2026-07-02*

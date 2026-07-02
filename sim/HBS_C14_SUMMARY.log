@@ -1,0 +1,42 @@
+HBS_C14_VERDICT=COMPUTATIONALLY_EXPRESSIVE
+COMPOSITE_SCORE=0.8107
+DISTINCT_PRIMITIVES=4
+CLOSURE_RATE=0.917
+EQUIV_SCORE=0.806
+PROG_SUCCESS=0.400
+A2_MEMORY_EFFECT=1.97
+SEQUENCE_DETERMINISM=0.995
+
+PRIMITIVE_SIGNATURES
+  A1: BOUNDED_INTEGRATOR  |  linear accumulation | E_slope≈-0.266 | entropy=0.12
+  A2: EXPONENTIAL_AMPLIFIER  |  geometric E-growth | E_slope≈0.484 | OVF=1 | entropy=5.03
+  A3: THRESHOLD_DETECTOR  |  oscillatory clipping | crossings=0.000 | E_var=0.0 | entropy=-0.00
+  A4: NOISE_SOURCE  |  entropic mixing | entropy=1.55 | E_range=33
+
+ALGEBRA_CLOSURE
+  A1->A2: CLOSED observed=A2
+  A1->A3: OPEN observed=A2
+  A1->A4: CLOSED observed=A4
+  A2->A1: CLOSED observed=A1
+  A2->A3: CLOSED observed=A3
+  A2->A4: CLOSED observed=A4
+  A3->A1: CLOSED observed=A1
+  A3->A2: CLOSED observed=A2
+  A3->A4: CLOSED observed=A4
+  A4->A1: CLOSED observed=A1
+  A4->A2: CLOSED observed=A2
+  A4->A3: CLOSED observed=A3
+
+EQUIVALENCE_MAP
+  MAC accumulation chain -> ACCUMULATOR: score=1.000
+  Cancellation identity -> ZERO_DRIFT: score=0.975
+  Threshold function -> THRESHOLD_CLIP: score=0.556
+  Oscillatory filter (A2-A3) -> AMPLITUDE_BOUNDED_OSCILLATOR: score=1.000
+  Bounded integrator (A1×3→A3→A1) -> INTEGRATE_AND_CLIP: score=0.500
+
+MINIMAL_PROGRAMS
+  P0: Stable Accumulator  (A1×5) | success=100% | phases=A1→A1→A1→A1→A1
+  P1: Saturation Detector  (A2A2A3A1A1) | success=0% | phases=A2→A2→A3→A1→A1
+  P2: Cancellation Amplifier  (A1A1A2A1A1) | success=0% | phases=A1→A1→A2→A1→A1
+  P3: Boundary Trigger  (A3A1A1A1A1) | success=0% | phases=A2→A1→A1→A1→A1
+  P4: Drift Stabilizer  (A4A1A1A1A1) | success=100% | phases=A4→A1→A1→A1→A1
