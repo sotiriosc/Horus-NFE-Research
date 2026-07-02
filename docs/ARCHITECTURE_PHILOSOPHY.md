@@ -1067,6 +1067,81 @@ C5 proved the kernel is a partition function over its decision surface. C5.1 def
 
 ---
 
+---
+
+## C6 — External Realism Validation Principle
+
+*Added: 2026-07-02 · Authority: HBS-C6 adversarial workload stress-test (2500 cycles, 5 workloads)*
+
+### Principle
+
+**Internal partition validity (C5) does not imply external workload stability.**
+
+C5 exhaustively validated the C4 kernel's decision surface by testing all 8,192 combinations of (class, E, depth) with uniform distribution. C5 proved the kernel is a partition function: every input maps to exactly one output with zero ambiguity. This is a necessary property. It is not a sufficient property for deployment.
+
+C6 provides the complementary test: what does the system actually do when driven by adversarial, non-uniform, real-world workloads? The answer is that distribution matters as much as topology.
+
+### What C5 Validates
+
+C5 validates:
+- The **decision surface topology** is consistent (partition function property)
+- **Depth override** is a terminal annihilation step (no class/region leakage)
+- **Boundary transitions** are step functions with zero smearing
+- All 8,192 input states are classified unambiguously
+
+C5 does **not** validate:
+- That real workloads distribute uniformly across the decision surface
+- That accumulator drift remains bounded under realistic stimulus
+- That STABLE-band occupancy is dominant in practice
+- That depth management is sufficient for all workload energy levels
+
+### What C6 Validates
+
+C6 uses five adversarial workload generators (W1–W5) to measure **what actually happens** when the hardware is driven by non-uniform stimulus:
+
+| Workload | Class | Finding | KL vs C5 |
+|---|---|---|---|
+| W1 Sparse MAC | A | 95% STABLE, 5% SATURATE — spike suppression works | 0.80 nats |
+| W2 Cancellation | B | 100% STABLE but 63.6× residual amplification — cancellation is NOT safe in NFE | 0.98 nats |
+| W3 Boundary oscillation | C | 74.6% boundary crossing rate; COLLAPSE=25.2%, SATURATE=50% | 0.52 nats |
+| W4 Deep transformer chain | D | 98.6% SATURATE, 60.4% OVF rate — unclamped feedback chains explode | 1.32 nats |
+| W5 Saturation spikes | A | 90% STABLE, 10% SATURATE — spike energy is absorbed | 0.70 nats |
+
+Average KL divergence from C5 uniform baseline: **0.86 nats** — real workloads are substantially non-uniform.
+
+### Three Formal Clarifications (C6)
+
+**1. C5 topology ≠ workload stability**  
+The C4 kernel's partition property guarantees that routing decisions are consistent. It does not guarantee that the arithmetic executed under those decisions is stable. W4 demonstrates this: the kernel correctly routes all operations, but the feedback chain's exponent grows monotonically until OVF, entirely within the kernel's defined behavior.
+
+**2. Cancellation is not safe in NFE**  
+W2 shows that SUB operations at equal exponents produce residuals **63.6× larger than the quantization step** at E=32. This is not a kernel failure — the kernel correctly routes CLASS_B through TRANSITION and NORMALIZE_THEN_EXECUTE. It is a physics property of the NFE encoding: subtraction at equal exponents produces a result near the operand value, not near zero. The C4 kernel's CLASS_B routing exists precisely because of this physics. C6 confirms that the routing rule was correctly motivated.
+
+**3. Internal decision topology must be guarded by timing-aware workload epoch management**  
+W1, W2, W4, W5 all reach 50% of maximum accumulator value within 9–11 cycles — below the epoch depth threshold of 16. This means high-energy workloads can saturate the accumulator faster than the epoch boundary fires. The compiler's depth management (INSERT_EPOCH_BOUNDARY at depth=16) is sufficient for moderate-energy workloads but may require tightening (e.g., workload-class-specific depth limits) for high-energy workload classes.
+
+### Divergence between C5 and C6 is Expected and Must be Measured
+
+The KL divergence between C5 uniform distribution and real workload distributions is **not an error**. It is a measurement. Any system that claims C5 topological validity automatically extends to real-world safety is making an unjustified inference.
+
+The correct reading of C5 and C6 together is:
+
+```
+C5: The kernel is structurally sound. Its decisions are total, deterministic,
+    and non-overlapping. This is verified by exhaustive enumeration.
+
+C6: Under adversarial workloads, the system produces non-uniform distributions.
+    Some workloads (W3, W4) never reach STABLE. One workload (W4) reaches
+    saturation rapidly due to feedback multiplication. Cancellation (W2) is
+    not arithmetically safe. These are physics constraints, not kernel failures.
+
+C5 ∧ C6 together: The compiler makes correct routing decisions. The hardware
+    physics imposes limits that the routing cannot overcome. Both facts must
+    be held simultaneously.
+```
+
+---
+
 *Horus (Native Fractional Engine project) · Architecture Philosophy v3 ·
 Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate*
 *HBS-11 Validated: 2026-07-02 · HBS-12 Arithmetic Envelope added: 2026-07-02*
@@ -1077,3 +1152,4 @@ Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate
 *C4 Compiler Kernel Compression Principle added: 2026-07-02*
 *C5 Decision Surface Validation Principle added: 2026-07-02*
 *C5.1 Semantic Consistency Correction Principle added: 2026-07-02*
+*C6 External Realism Validation Principle added: 2026-07-02*
