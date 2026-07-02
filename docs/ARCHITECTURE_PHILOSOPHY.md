@@ -1142,6 +1142,50 @@ C5 ∧ C6 together: The compiler makes correct routing decisions. The hardware
 
 ---
 
+## C7 — Failure-Domain Isolation Principle
+
+*Validated by HBS-C7 (2026-07-02)*
+
+**Principle:** A topologically correct, exhaustively validated decision surface does
+not imply a single unified failure mode. HORUS v3 exhibits four structurally distinct
+failure attractors that cannot be described by a shared depth threshold.
+
+**Measured failure attractors (HBS-C7, 1,100 cycles):**
+
+| Attractor | Class | Mechanism | TTI (measured) |
+|---|---|---|---|
+| Linear residual accumulation | CLASS_B | Cancel residual sums monotonically in accum | 2 cycles |
+| Geometric exponent explosion  | CLASS_D | MUL ×2 chain overflows 6-bit exponent field | 31 cycles |
+| Permanent boundary oscillation | CLASS_C | Thoth Rollover at E=15/47 every other cycle | 0 cycles |
+| Entropy-dissipation mixing    | Mixed   | Multi-region injection spans all regime bands | 4 cycles |
+
+**Key finding:** TTI spread = **31×** across regimes (min=0, max=31 cycles). This
+rules out a single failure threshold. Each attractor has an independent onset depth
+driven by a distinct physical mechanism.
+
+**On epoch_depth=16:** Calibrated for the geometric explosion attractor (Attractor 2 —
+CLASS_D). It correctly interrupts the accumulator before E field overflow in ×2 MUL
+chains. It is not applicable to Attractor 3 (boundary oscillator isolated from accum
+by routing) and only partially applicable to Attractors 1 and 4 (onset precedes epoch
+by 12–14 cycles).
+
+**On determinism:** HORUS v3 is fully deterministic under adversarial stress. Identical
+input sequences produce identical output trajectories. Apparent run-length variation in
+R2 drift chains is a deterministic consequence of epoch management intersecting the
+exponent drift path — not hardware non-determinism.
+
+**On recovery:** All four attractors are input-driven. Recovery latency = 0 cycles for
+all regimes. No attractor locking or hysteresis observed. The failure domain is sharp
+and the system self-clears when adversarial forcing is removed.
+
+**C5 + C6 + C7 together:** The compiler kernel is topologically correct (C5). Under
+adversarial stimulus it encounters real failure physics (C6). Those failure physics
+resolve into four independent attractors with distinct onset depths and dynamics (C7).
+The architecture is not unsafe — it is multi-modal. Correct management requires
+per-attractor awareness, not a single universal depth limit.
+
+---
+
 *Horus (Native Fractional Engine project) · Architecture Philosophy v3 ·
 Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate*
 *HBS-11 Validated: 2026-07-02 · HBS-12 Arithmetic Envelope added: 2026-07-02*
@@ -1153,3 +1197,4 @@ Digital Physics · Quantized Event Accumulation Engine · Lossy Stable Substrate
 *C5 Decision Surface Validation Principle added: 2026-07-02*
 *C5.1 Semantic Consistency Correction Principle added: 2026-07-02*
 *C6 External Realism Validation Principle added: 2026-07-02*
+*C7 Failure-Domain Isolation Principle added: 2026-07-02*

@@ -30,7 +30,7 @@ SRC_SYSTOLIC := $(RTL)/horus_systolic_array.v $(RTL)/horus_controller.v \
                 $(RTL)/horus_input_buffer.v $(RTL)/horus_top.v
 
 # =============================================================================
-.PHONY: all hbs11 hbs12 hbs13 hbs14 hbs_c2 hbs_c5 hbs_c6
+.PHONY: all hbs11 hbs12 hbs13 hbs14 hbs_c2 hbs_c5 hbs_c6 hbs_c7
 all: sim_mesh
 	@echo ""
 	@echo "Running Horus Mesh Testbench (7/7 tests expected)..."
@@ -244,6 +244,9 @@ clean:
 	rm -f HBS_C6_REAL_WORLD.csv HBS_C6_SUMMARY.log sim_hbs_c6 \
 	      hbs_c6_workload_heatmap.png hbs_c6_collapse_exposure.png \
 	      hbs_c6_cancellation_drift.png hbs_c6_deepchain_degradation.png
+	rm -f HBS_C7_FAILURE_DOMAIN.csv HBS_C7_SUMMARY.log sim_hbs_c7 \
+	      hbs_c7_failure_heatmap.png hbs_c7_r2_exponent_drift.png \
+	      hbs_c7_r1_residual_growth.png hbs_c7_recovery_comparison.png
 	@echo "Cleaned generated binaries and artifacts."
 
 .PHONY: help
@@ -268,6 +271,7 @@ help:
 	@echo "  make hbs_c2           HBS-C2 live system observation harness"
 	@echo "  make hbs_c5           HBS-C5 C4 kernel decision surface stress-test"
 	@echo "  make hbs_c6           HBS-C6 adversarial real-world workload stress-test"
+	@echo "  make hbs_c7           HBS-C7 failure-domain isolation suite"
 
 # HBS-14 end-to-end system consistency: horus_system + horus_systolic_array
 sim_hbs14: $(TB)/tb_hbs14_system_integration.v $(SRC_CORE) $(RTL)/horus_systolic_array.v
@@ -333,4 +337,22 @@ hbs_c6: sim_hbs_c6
 	@echo "         docs/HBS_C6_RESULTS.md"
 	@echo "         hbs_c6_workload_heatmap.png  hbs_c6_collapse_exposure.png"
 	@echo "         hbs_c6_cancellation_drift.png  hbs_c6_deepchain_degradation.png"
+	@echo ""
+
+# ── HBS-C7: Failure-Domain Isolation Suite ───────────────────────────────────
+# Tests horus_system DUT with 4 adversarial regimes × 275 cycles = 1100 cycles.
+sim_hbs_c7: $(TB)/tb_hbs_c7_failure_domain.v $(SRC_CORE)
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs_c7: sim_hbs_c7
+	@echo ""
+	@echo "Running HBS-C7 Failure-Domain Isolation Suite..."
+	$(VVP) sim_hbs_c7
+	@echo ""
+	$(PYTHON) analyze_hbs_c7_failure_domain.py
+	@echo ""
+	@echo "Outputs: HBS_C7_FAILURE_DOMAIN.csv  HBS_C7_SUMMARY.log"
+	@echo "         docs/HBS_C7_RESULTS.md  docs/HORUS_FAILURE_DOMAIN_MAP.md"
+	@echo "         hbs_c7_failure_heatmap.png  hbs_c7_r2_exponent_drift.png"
+	@echo "         hbs_c7_r1_residual_growth.png  hbs_c7_recovery_comparison.png"
 	@echo ""
