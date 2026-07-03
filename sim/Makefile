@@ -511,6 +511,24 @@ hbs_c17: sim_hbs_c17
 	@echo "         docs/HBS_C17_FEEDBACK_CLOSURE.md  docs/HORUS_CAUSAL_CLOSURE_MAP.md"
 	@echo ""
 
+# ── HBS-C22: Exogenous Control Injection Test (Strict Version) ────────────────
+# 4 regimes × 1,500 cycles = 6,000 cycles.
+# First test with a TRULY INDEPENDENT injection source (mode_lfsr, no DUT dependency).
+# Introduces Mutual Information as the primary causality metric.
+sim_hbs_c22: $(TB)/tb_hbs_c22_exogenous_injection.v $(SRC_CORE)
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs_c22: sim_hbs_c22
+	@echo ""
+	@echo "Running HBS-C22 Exogenous Injection Suite..."
+	$(VVP) sim_hbs_c22
+	@echo ""
+	$(PYTHON) HBS_C22_ANALYSIS.py
+	@echo ""
+	@echo "Outputs: HBS_C22_INJECTION_TRACE.csv  HBS_C22_MI_MATRIX.csv"
+	@echo "         HBS_C22_REGIME_RESULTS.csv    HBS_C22_SUMMARY.log"
+	@echo ""
+
 # ── HBS-C21: Controlled Feedback Coupling Experiment (Option A) ───────────────
 # 3 regimes (k=12, 10, 8) × 2,000 cycles = 6,000 cycles.
 # Measures AII, CPR, PIG, SLF to characterize coupling penetration depth.

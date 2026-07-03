@@ -1,0 +1,231 @@
+========================================================================
+HBS-C22: Exogenous Control Injection Test (Strict Version)
+  Option B: computed_mod = computed XOR mask(mode_tag)
+  mode_tag source: independent 15-bit LFSR (zero DUT dependency)
+========================================================================
+Total cycles: 6000
+
+────────────────────────────────────────────────────────────────────────
+REGIME 1: R1-Baseline  (1500 cycles)
+────────────────────────────────────────────────────────────────────────
+  Mode occupancy:
+    00:identity         :  1500 (100.0%)
+    01:mant-flip        :     0 (  0.0%)
+    10:Efield-flip      :     0 (  0.0%)
+    11:both-flip        :     0 (  0.0%)
+
+  ┌────────────────────────────────────────────────────┐
+  │  MUTUAL INFORMATION (first real causality metric)  │
+  ├────────────────────────────────────────────────────┤
+  │  MI_arith  I(mode_tag ; attractor_base)  = 0.000000 bits  │
+  │  MI_obs    I(mode_tag ; attractor_mod)   = 0.000000 bits  │
+  │  MI_delta  (observer − arithmetic)       = 0.000000 bits  │
+  └────────────────────────────────────────────────────┘
+
+  OTHER METRICS:
+    CPR  = 0.000000  (P(attractor changed by XOR) = 0.00%)
+    SLF  = 0.000000 bits  KL(P_base || P_mod)
+    SLF vs C20 baseline:
+      KL(C20 || P_base) = 0.000451 bits
+      KL(C20 || P_mod)  = 0.000451 bits
+    PIG  = 1.000000  at 81 transitions
+    E-field mean shift = +0.0000 units
+
+  Attractor distribution:
+    A1(cancel)        base=0.008  mod=0.008  Δ=+0.000  C20=0.010
+    A2(explode)       base=0.198  mod=0.198  Δ=+0.000  C20=0.202
+    A3(rollover)      base=0.017  mod=0.017  Δ=+0.000  C20=0.018
+    A4(entropic)      base=0.777  mod=0.777  Δ=+0.000  C20=0.770
+  Attractor changed: 0/1500 cycles
+
+  ╔══════════════════════════════════════════════════════╗
+  ║  ARITHMETIC VERDICT : ARITHMETICALLY_CLOSED         ║
+  ║  OBSERVER VERDICT   : CASE_1_TRUE_CLOSURE           ║
+  ╚══════════════════════════════════════════════════════╝
+
+────────────────────────────────────────────────────────────────────────
+REGIME 2: R2-LowFreq(epoch=16)  (1500 cycles)
+────────────────────────────────────────────────────────────────────────
+  Mode occupancy:
+    00:identity         :   208 ( 13.9%)
+    01:mant-flip        :   416 ( 27.7%)
+    10:Efield-flip      :   444 ( 29.6%)
+    11:both-flip        :   432 ( 28.8%)
+
+  ┌────────────────────────────────────────────────────┐
+  │  MUTUAL INFORMATION (first real causality metric)  │
+  ├────────────────────────────────────────────────────┤
+  │  MI_arith  I(mode_tag ; attractor_base)  = 0.002024 bits  │
+  │  MI_obs    I(mode_tag ; attractor_mod)   = 0.004536 bits  │
+  │  MI_delta  (observer − arithmetic)       = 0.002512 bits  │
+  └────────────────────────────────────────────────────┘
+
+  OTHER METRICS:
+    CPR  = 0.258000  (P(attractor changed by XOR) = 25.80%)
+    SLF  = 0.005159 bits  KL(P_base || P_mod)
+    SLF vs C20 baseline:
+      KL(C20 || P_base) = 0.000451 bits
+      KL(C20 || P_mod)  = 0.003658 bits
+    PIG  = 0.994836  at 81 transitions
+    E-field mean shift = +0.8520 units
+
+  Attractor distribution:
+    A1(cancel)        base=0.008  mod=0.013  Δ=+0.005  C20=0.010
+    A2(explode)       base=0.198  mod=0.219  Δ=+0.021  C20=0.202
+    A3(rollover)      base=0.017  mod=0.012  Δ=-0.005  C20=0.018
+    A4(entropic)      base=0.777  mod=0.756  Δ=-0.021  C20=0.770
+  Attractor changed: 387/1500 cycles
+
+  Per-mode attractor distribution shift:
+    mode=00:identity  (n=208):
+    mode=01:mant-flip  (n=416):
+    mode=10:Efield-flip  (n=444):
+      A2: base=0.173 → mod=0.207  (Δ=+0.034)
+      A4: base=0.804 → mod=0.770  (Δ=-0.034)
+    mode=11:both-flip  (n=432):
+      A2: base=0.208 → mod=0.245  (Δ=+0.037)
+      A4: base=0.764 → mod=0.727  (Δ=-0.037)
+
+  ╔══════════════════════════════════════════════════════╗
+  ║  ARITHMETIC VERDICT : ARITHMETICALLY_CLOSED         ║
+  ║  OBSERVER VERDICT   : CASE_1_TRUE_CLOSURE           ║
+  ╚══════════════════════════════════════════════════════╝
+
+────────────────────────────────────────────────────────────────────────
+REGIME 3: R3-HighFreq(per-cycle)  (1500 cycles)
+────────────────────────────────────────────────────────────────────────
+  Mode occupancy:
+    00:identity         :   214 ( 14.3%)
+    01:mant-flip        :   429 ( 28.6%)
+    10:Efield-flip      :   428 ( 28.5%)
+    11:both-flip        :   429 ( 28.6%)
+
+  ┌────────────────────────────────────────────────────┐
+  │  MUTUAL INFORMATION (first real causality metric)  │
+  ├────────────────────────────────────────────────────┤
+  │  MI_arith  I(mode_tag ; attractor_base)  = 0.000542 bits  │
+  │  MI_obs    I(mode_tag ; attractor_mod)   = 0.003396 bits  │
+  │  MI_delta  (observer − arithmetic)       = 0.002853 bits  │
+  └────────────────────────────────────────────────────┘
+
+  OTHER METRICS:
+    CPR  = 0.250667  (P(attractor changed by XOR) = 25.07%)
+    SLF  = 0.002168 bits  KL(P_base || P_mod)
+    SLF vs C20 baseline:
+      KL(C20 || P_base) = 0.000451 bits
+      KL(C20 || P_mod)  = 0.001374 bits
+    PIG  = 0.996370  at 81 transitions
+    E-field mean shift = +0.1780 units
+
+  Attractor distribution:
+    A1(cancel)        base=0.008  mod=0.012  Δ=+0.004  C20=0.010
+    A2(explode)       base=0.198  mod=0.206  Δ=+0.008  C20=0.202
+    A3(rollover)      base=0.017  mod=0.013  Δ=-0.004  C20=0.018
+    A4(entropic)      base=0.777  mod=0.769  Δ=-0.008  C20=0.770
+  Attractor changed: 376/1500 cycles
+
+  Per-mode attractor distribution shift:
+    mode=00:identity  (n=214):
+    mode=01:mant-flip  (n=429):
+    mode=10:Efield-flip  (n=428):
+      A2: base=0.203 → mod=0.215  (Δ=+0.012)
+      A4: base=0.776 → mod=0.764  (Δ=-0.012)
+    mode=11:both-flip  (n=429):
+      A2: base=0.198 → mod=0.214  (Δ=+0.016)
+      A4: base=0.776 → mod=0.760  (Δ=-0.016)
+
+  ╔══════════════════════════════════════════════════════╗
+  ║  ARITHMETIC VERDICT : ARITHMETICALLY_CLOSED         ║
+  ║  OBSERVER VERDICT   : CASE_1_TRUE_CLOSURE           ║
+  ╚══════════════════════════════════════════════════════╝
+
+────────────────────────────────────────────────────────────────────────
+REGIME 4: R4-Structured(01→10→11→00)  (1500 cycles)
+────────────────────────────────────────────────────────────────────────
+  Mode occupancy:
+    00:identity         :   375 ( 25.0%)
+    01:mant-flip        :   375 ( 25.0%)
+    10:Efield-flip      :   375 ( 25.0%)
+    11:both-flip        :   375 ( 25.0%)
+
+  ┌────────────────────────────────────────────────────┐
+  │  MUTUAL INFORMATION (first real causality metric)  │
+  ├────────────────────────────────────────────────────┤
+  │  MI_arith  I(mode_tag ; attractor_base)  = 0.002135 bits  │
+  │  MI_obs    I(mode_tag ; attractor_mod)   = 0.001824 bits  │
+  │  MI_delta  (observer − arithmetic)       = -0.000312 bits  │
+  └────────────────────────────────────────────────────┘
+
+  OTHER METRICS:
+    CPR  = 0.210667  (P(attractor changed by XOR) = 21.07%)
+    SLF  = 0.000662 bits  KL(P_base || P_mod)
+    SLF vs C20 baseline:
+      KL(C20 || P_base) = 0.004231 bits
+      KL(C20 || P_mod)  = 0.006910 bits
+    PIG  = 1.003557  at 345 transitions
+    E-field mean shift = -0.0640 units
+
+  Attractor distribution:
+    A1(cancel)        base=0.008  mod=0.010  Δ=+0.002  C20=0.010
+    A2(explode)       base=0.199  mod=0.197  Δ=-0.002  C20=0.202
+    A3(rollover)      base=0.010  mod=0.008  Δ=-0.002  C20=0.018
+    A4(entropic)      base=0.783  mod=0.785  Δ=+0.002  C20=0.770
+  Attractor changed: 316/1500 cycles
+
+  Per-mode attractor distribution shift:
+    mode=00:identity  (n=375):
+    mode=01:mant-flip  (n=375):
+    mode=10:Efield-flip  (n=375):
+      A2: base=0.216 → mod=0.200  (Δ=-0.016)
+      A4: base=0.771 → mod=0.787  (Δ=+0.016)
+    mode=11:both-flip  (n=375):
+
+  ╔══════════════════════════════════════════════════════╗
+  ║  ARITHMETIC VERDICT : ARITHMETICALLY_CLOSED         ║
+  ║  OBSERVER VERDICT   : CASE_1_TRUE_CLOSURE           ║
+  ╚══════════════════════════════════════════════════════╝
+
+========================================================================
+MUTUAL INFORMATION SUMMARY ACROSS ALL REGIMES
+========================================================================
+
+  Regime                            MI_arith      MI_obs       CPR  Verdict
+  ──────────────────────────────────────────────────────────────────────
+  R1-Baseline                       0.000000    0.000000    0.0000  CASE_1_TRUE_CLOSURE
+  R2-LowFreq(epoch=16)              0.002024    0.004536    0.2580  CASE_1_TRUE_CLOSURE
+  R3-HighFreq(per-cycle)            0.000542    0.003396    0.2507  CASE_1_TRUE_CLOSURE
+  R4-Structured(01→10→11→00)        0.002135    0.001824    0.2107  CASE_1_TRUE_CLOSURE
+
+========================================================================
+ARITHMETIC CLOSURE STATUS
+========================================================================
+
+  ✓ ARITHMETIC LAYER: CLOSED in all regimes.
+  MI_arith ≈ 0 in all 4 regimes (below 0.01 bit threshold).
+  mode_tag has ZERO measurable influence on 'computed'.
+  HBS-C18 Closure Theorem is NOT violated.
+
+========================================================================
+OBSERVER LAYER COUPLING ANALYSIS
+========================================================================
+
+  No CASE 3 coupling detected in any regime.
+  XOR coupling does not produce MI_obs > 0.1 bits.
+
+========================================================================
+C21 vs C22: ACCUM ECHO vs EXOGENOUS INJECTION
+========================================================================
+
+  C21 (Option A — accum_reg echo):   max CPR = 1.36%,  r(coupling,computed)=0.97
+    → coupling carries arithmetic history (highly correlated with computed)
+    → no new attractor structure, no MI from state
+
+  C22 (Option B — exogenous XOR):    max MI_obs=0.0045 bits, max CPR=0.2580
+    → coupling carries no arithmetic history (independent LFSR source)
+    → large MI_obs because XOR directly controls E-field bits
+    → but MI_arith = 0: arithmetic computation is unchanged
+
+  KEY INSIGHT: Observer controllability ≠ computational causal influence.
+  You can STEER what an observer classifies as attractor states
+  without changing a single bit of the arithmetic computation.
+
