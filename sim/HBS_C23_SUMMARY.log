@@ -1,0 +1,200 @@
+========================================================================
+HBS-C23: Observer-Decoupling Falsification Suite
+  One-line question: 'Does the attractor system survive when the
+  coordinate system itself is destroyed?'
+========================================================================
+Total cycles: 6000
+
+────────────────────────────────────────────────────────────────────────
+OBSERVER: STD  —  E_obs = result[11:6]            (ground truth)
+────────────────────────────────────────────────────────────────────────
+  Attractor distribution (std | this transform):
+    A1: std=0.0130  T=0.0130  Δ=+0.0000
+    A2: std=0.2005  T=0.2005  Δ=+0.0000
+    A3: std=0.0177  T=0.0177  Δ=+0.0000
+    A4: std=0.7688  T=0.7688  Δ=+0.0000
+
+
+────────────────────────────────────────────────────────────────────────
+OBSERVER: R1  —  E_alt = result[9:4]^result[12:7] (desync)
+────────────────────────────────────────────────────────────────────────
+  Attractor distribution (std | this transform):
+    A1: std=0.0130  T=0.0130  Δ=+0.0000
+    A2: std=0.2005  T=0.2025  Δ=+0.0020
+    A3: std=0.0177  T=0.0150  Δ=-0.0027
+    A4: std=0.7688  T=0.7695  Δ=+0.0007
+
+  Disagreement rate:  35.38%
+  Max dist. shift:    0.0027  (>0.10 = identity changed)
+  MI(std;transform):  0.0152 bits  (<0.05 = near-zero)
+  Transition entropy: std=0.2079 bits  T=0.7281 bits
+
+  Conditional survival P(attr_T = x | attr_STD = x):
+    A1: 0.0897 ← IDENTITY LOST
+    A2: 0.2444 ← IDENTITY LOST
+    A3: 0.0000 ← IDENTITY LOST
+    A4: 0.7752
+  A1→A2 swap rate: P(T=A2|S=A1) = 0.0000  (>0.1 = swap)
+  A2→A1 swap rate: P(T=A1|S=A2) = 0.0175
+  A3 survival:     P(T=A3|S=A3) = 0.0000  (<0.5 = A3 invariance broken)
+
+────────────────────────────────────────────────────────────────────────
+OBSERVER: R2  —  E_r2  = popcount(result^accum)   (Hamming domain)
+────────────────────────────────────────────────────────────────────────
+  Attractor distribution (std | this transform):
+    A1: std=0.0130  T=0.0158  Δ=+0.0028
+    A2: std=0.2005  T=0.0030  Δ=-0.1975
+    A3: std=0.0177  T=0.0003  Δ=-0.0173
+    A4: std=0.7688  T=0.9808  Δ=+0.2120
+
+  Disagreement rate:  22.13%
+  Max dist. shift:    0.2120  (>0.10 = identity changed)
+  MI(std;transform):  0.1008 bits  (<0.05 = near-zero)
+  Transition entropy: std=0.2079 bits  T=0.1390 bits
+
+  Conditional survival P(attr_T = x | attr_STD = x):
+    A1: 1.0000
+    A2: 0.0017 ← IDENTITY LOST
+    A3: 0.0000 ← IDENTITY LOST
+    A4: 0.9954
+  A1→A2 swap rate: P(T=A2|S=A1) = 0.0000  (>0.1 = swap)
+  A2→A1 swap rate: P(T=A1|S=A2) = 0.0000
+  A3 survival:     P(T=A3|S=A3) = 0.0000  (<0.5 = A3 invariance broken)
+
+────────────────────────────────────────────────────────────────────────
+OBSERVER: R3  —  E_r3  = result(t-1)[11:6]        (1-cycle lag)
+────────────────────────────────────────────────────────────────────────
+  Attractor distribution (std | this transform):
+    A1: std=0.0130  T=0.0132  Δ=+0.0002
+    A2: std=0.2005  T=0.2005  Δ=+0.0000
+    A3: std=0.0177  T=0.0177  Δ=+0.0000
+    A4: std=0.7688  T=0.7687  Δ=-0.0002
+
+  Disagreement rate:  5.95%
+  Max dist. shift:    0.0002  (>0.10 = identity changed)
+  MI(std;transform):  0.7315 bits  (<0.05 = near-zero)
+  Transition entropy: std=0.2079 bits  T=0.2092 bits
+
+  Conditional survival P(attr_T = x | attr_STD = x):
+    A1: 0.0128 ← IDENTITY LOST
+    A2: 0.9227
+    A3: 0.1226 ← IDENTITY LOST
+    A4: 0.9796
+  A1→A2 swap rate: P(T=A2|S=A1) = 0.0000  (>0.1 = swap)
+  A2→A1 swap rate: P(T=A1|S=A2) = 0.0000
+  A3 survival:     P(T=A3|S=A3) = 0.1226  (<0.5 = A3 invariance broken)
+
+────────────────────────────────────────────────────────────────────────
+OBSERVER: R4  —  E_r4  = x'[11:6], x'=rotl+XOR   (rotation)
+────────────────────────────────────────────────────────────────────────
+  Attractor distribution (std | this transform):
+    A1: std=0.0130  T=0.0158  Δ=+0.0028
+    A2: std=0.2005  T=0.2082  Δ=+0.0077
+    A3: std=0.0177  T=0.0175  Δ=-0.0002
+    A4: std=0.7688  T=0.7585  Δ=-0.0103
+
+  Disagreement rate:  37.70%
+  Max dist. shift:    0.0103  (>0.10 = identity changed)
+  MI(std;transform):  0.0017 bits  (<0.05 = near-zero)
+  Transition entropy: std=0.2079 bits  T=0.9255 bits
+
+  Conditional survival P(attr_T = x | attr_STD = x):
+    A1: 0.0385 ← IDENTITY LOST
+    A2: 0.2078 ← IDENTITY LOST
+    A3: 0.0000 ← IDENTITY LOST
+    A4: 0.7555
+  A1→A2 swap rate: P(T=A2|S=A1) = 0.2179  (>0.1 = swap)
+  A2→A1 swap rate: P(T=A1|S=A2) = 0.0158
+  A3 survival:     P(T=A3|S=A3) = 0.0000  (<0.5 = A3 invariance broken)
+
+========================================================================
+R4: PER-ROTATION-AMOUNT DISAGREEMENT RATE
+========================================================================
+
+   rot_k   disagree%  assessment
+  ──────────────────────────────
+       0       38.88% ← LARGE
+       1       39.44% ← LARGE
+       2       36.85% ← LARGE
+       3       36.85% ← LARGE
+       4       38.79% ← LARGE
+       5       37.07% ← LARGE
+       6       34.27% ← LARGE
+       7       36.08% ← LARGE
+       8       35.99% ← LARGE
+       9       43.10% ← LARGE
+      10       36.61% ← LARGE
+      11       36.64% ← LARGE
+      12       39.44% ← LARGE
+
+========================================================================
+A3 INVARIANCE UNDER LAGGED OBSERVATION (R3 DEEP ANALYSIS)
+========================================================================
+
+  A3 cycles (standard observer): 106 (1.77%)
+  A3 cycles (lagged observer):   106 (1.77%)
+
+  When attr_STD=A3 (n=106), lagged observer sees:
+    A1: 0 (0.0%)
+    A2: 93 (87.7%)
+    A3: 13 (12.3%)
+    A4: 0 (0.0%)
+
+  A3 boundary analysis:
+    At E=63 (A3): E(t-1) is likely E=62 → A2
+    At E=0  (A1): E(t-1) is likely E=63 → A3
+    → Lagged A3 appears as A2, lagged A1 appears as A3 (E-field sweep)
+
+========================================================================
+SUMMARY TABLE: All 4 observer transforms vs ground truth
+========================================================================
+
+  Transform       Disagree%   MaxShift   MI(bits)   P(A3|A3)   P(A2|A1)
+  ──────────────────────────────────────────────────────────────────────
+  R1-Desync           35.38     0.0027     0.0152     0.0000     0.0000
+  R2-PopCount         22.13     0.2120     0.1008     0.0000     0.0000
+  R3-Lag1              5.95     0.0002     0.7315     0.1226     0.0000
+  R4-Rotation         37.70     0.0103     0.0017     0.0000     0.2179
+
+========================================================================
+PASS / FAIL VERDICT
+========================================================================
+
+  ╔══════════════════════════════════════════════════════╗
+  ║  MODEL BREAKS — Attractor system is coordinate-     ║
+  ║  DEPENDENT (observer artifacts, not invariants)     ║
+  ╚══════════════════════════════════════════════════════╝
+
+  FAIL conditions triggered:
+    ✗ R1-Desync: disagree_rate=0.354 > 5%
+    ✗ R2-PopCount: disagree_rate=0.221 > 5%
+    ✗ R3-Lag1: disagree_rate=0.059 > 5%
+    ✗ R4-Rotation: disagree_rate=0.377 > 5%
+    ✗ R2-PopCount: max_dist_shift=0.212 > 10 pp → identity changed
+    ✗ R3: P(A3|A3)=0.123 < 0.5 → A3 not invariant under lag
+    ✗ R4: P(A2|A1)=0.218 > 0.10 → A1/A2 swap under rotation
+
+
+========================================================================
+SCIENTIFIC INTERPRETATION
+========================================================================
+
+  HORUS v3 attractors (A1–A4) are OBSERVER-FRAME ARTIFACTS.
+
+  They are stable ONLY in the specific coordinate system defined
+  by the standard E-field extraction: result[11:6].
+
+  Destroy that coordinate system (via desync, popcount, lag, or
+  rotation) and the attractor labels change — sometimes dramatically.
+
+  This does NOT invalidate the COMPUTATION — `computed` is still
+  fully deterministic and produces consistent arithmetic results.
+  What is invalidated is the CLAIM that A1–A4 are intrinsic
+  dynamical invariants independent of observation frame.
+
+  The correct characterization of HORUS v3 after C23:
+    • Arithmetic: invariant, frame-independent (proved C18–C22)
+    • Attractors: observer-defined, frame-dependent (proved C23)
+    • Causal closure: holds for arithmetic (proved C18–C22)
+    • Attractor labels: NOT causally invariant under coord change
+

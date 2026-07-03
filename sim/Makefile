@@ -511,6 +511,24 @@ hbs_c17: sim_hbs_c17
 	@echo "         docs/HBS_C17_FEEDBACK_CLOSURE.md  docs/HORUS_CAUSAL_CLOSURE_MAP.md"
 	@echo ""
 
+# ── HBS-C23: Observer-Decoupling Falsification Suite ─────────────────────────
+# 6,000 cycles, all 4 observer transforms applied simultaneously every cycle.
+# Tests whether attractors are coordinate-invariant dynamical properties or
+# observer-frame artifacts of the E-field extraction convention result[11:6].
+sim_hbs_c23: $(TB)/tb_hbs_c23_observer_decoupling.v $(SRC_CORE)
+	$(IVERILOG) $(IVFLAGS) -o $@ $^
+
+hbs_c23: sim_hbs_c23
+	@echo ""
+	@echo "Running HBS-C23 Observer-Decoupling Falsification Suite..."
+	$(VVP) sim_hbs_c23
+	@echo ""
+	$(PYTHON) HBS_C23_ANALYSIS.py
+	@echo ""
+	@echo "Outputs: HBS_C23_OBSERVER_TRACE.csv  HBS_C23_REGIME_RESULTS.csv"
+	@echo "         HBS_C23_SUMMARY.log"
+	@echo ""
+
 # ── HBS-C22: Exogenous Control Injection Test (Strict Version) ────────────────
 # 4 regimes × 1,500 cycles = 6,000 cycles.
 # First test with a TRULY INDEPENDENT injection source (mode_lfsr, no DUT dependency).

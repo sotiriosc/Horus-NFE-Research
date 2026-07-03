@@ -1885,3 +1885,61 @@ C22 upgrades the HBS-C18 closure proof from **structural** (no RTL causal edges)
 **Implication:** Observer controllability (the ability to change what a classifier sees) is categorically distinct from computational causal influence (the ability to change what is computed).  HORUS v3 cannot be "opened" by any external control stream that respects the ALU boundary — not because no one has tried hard enough, but because MI_arith = 0 is a mathematical certificate of independence.
 
 *C22 Causal Information Boundary Principle added: 2026-07-02*
+
+---
+
+## C23 Observer-Frame Relativity Principle
+
+> *"The computation is invariant.  The coordinate system is not.
+> Attractors are real in the frame that defines them —
+> and nowhere else."*
+
+HBS-C23 applied four adversarial observer transforms to the same DUT output simultaneously over 6,000 cycles.  No RTL was modified.  Only the E-field extraction formula was changed.
+
+**The four transforms:**
+
+| Transform | E-field extraction |
+|-----------|------------------|
+| R1 Desync | `result[9:4] ^ result[12:7]` |
+| R2 Nonlinear | `popcount(result ^ accum_reg[12:0])` |
+| R3 Lag-1 | `result(t-1)[11:6]` |
+| R4 Rotation | `rotl13(result, k) ^ epoch_mask` (epoch-varying) |
+
+**Key results:**
+
+| Transform | Disagree% | MI (bits) | A3 survival |
+|-----------|-----------|-----------|-------------|
+| R1 Desync | 35.4% | 0.015 | **0%** |
+| R2 PopCount | 22.1% | 0.101 | **0%** |
+| R3 Lag-1 | 5.95% | 0.731 | **12%** |
+| R4 Rotation | 37.7% | 0.002 | **0%** |
+
+**VERDICT: MODEL BREAKS — Attractor system is coordinate-dependent.**
+
+The A1–A4 taxonomy is NOT invariant under nonlinear or rotated observer transforms.  Specifically:
+
+- **A3 (Thoth Rollover)** disappears entirely under desync, popcount, and rotation.  It survives at 12% under lag (because E=63 and E=62 are adjacent in the sweep, and some consecutive cycles share E=63).
+- **A1/A2 swap** at 21.8% under rotation (R4).
+- **MI = 0.002 bits** under rotation: rotated observer is informationally independent of standard observer.
+- **Transition entropy increases 4.5×** under rotation (0.21 → 0.93 bits): apparent dynamics increase dramatically.
+
+**MI sensitivity spectrum:**
+
+```
+R3-lag(0.731) >> R2-pop(0.101) >> R1-desync(0.015) >> R4-rot(0.002)
+```
+
+The lag preserves the most attractor information (0.73 bits) because consecutive E-field values are close.  Full rotation destroys all correlation (0.002 bits).
+
+**The definitive two-layer characterization of HORUS v3:**
+
+| Layer | Property | Invariance |
+|-------|----------|------------|
+| Arithmetic | `computed = f(op_a, op_b, op_sel)` | **Frame-independent** |
+| Attractor taxonomy | A1–A4 via `result[11:6]` | **Frame-dependent** |
+
+The ARITHMETIC is a closed, causally isolated, coordinate-invariant computation (C18–C22).  The ATTRACTOR LABELS are a reproducible but observer-defined labeling of that computation, meaningful and stable only when the E-field extraction convention is preserved.
+
+Changing the extraction rule changes the attractors — not because the system changed, but because the attractors were always a description of the observation, not the underlying state.
+
+*C23 Observer-Frame Relativity Principle added: 2026-07-02*
